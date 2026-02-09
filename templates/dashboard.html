@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard">
+    <div class="balance-card">
+        <h2>Welcome {{ user.username }}</h2>
+        <h3>Your Balance</h3>
+        <div class="amount">${{ user.balance }}</div>
+    </div>
+
+    <button class="earn-btn">Watch Ad & Earn $0.10</button>
+</div>
+
+{% endblock %}

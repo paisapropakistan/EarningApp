@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaisaPro | Admin Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background: #010409; color: white; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid #30363d; }
+        .gradient-text { background: linear-gradient(90deg, #10b981, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-3xl font-black uppercase italic gradient-text">Admin <span class="text-white">Control</span></h1>
+                <p class="text-[10px] text-gray-500 font-bold tracking-[3px] uppercase">Management Dashboard v2.0</p>
+            </div>
+            <a href="/" class="glass px-6 py-2 rounded-full text-xs font-bold uppercase hover:bg-white hover:text-black transition">Back to Site</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-6 p-4 rounded-2xl {% if category == 'success' %}bg-green-500/10 text-green-500 border border-green-500/20{% else %}bg-red-500/10 text-red-500 border border-red-500/20{% endif %} text-xs font-bold">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="mb-12">
+            <h2 class="text-sm font-black text-gray-500 uppercase tracking-[4px] mb-6 flex items-center">
+                <i class="fas fa-crown mr-2 text-yellow-500"></i> Pending Plan Upgrades
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for req in upgrades %}
+                <div class="glass p-6 rounded-[40px] border-t-4 border-yellow-500 hover:shadow-[0_0_30px_rgba(234,179,8,0.1)] transition">
+                    <div class="flex justify-between mb-4">
+                        <span class="text-[10px] font-black bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full uppercase">{{ req.plan_name }}</span>
+                        <span class="text-[10px] text-gray-500 font-mono">ID: #{{ req.id }}</span>
+                    </div>
+
+                    <div class="space-y-2 mb-6">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Transaction ID:</p>
+                        <p class="text-sm font-black text-white font-mono bg-white/5 p-2 rounded-lg border border-white/5">{{ req.tid }}</p>
+                        <p class="text-xs font-bold text-gray-400 uppercase">Amount: <span class="text-green-500 font-black">Rs. {{ req.amount }}</span></p>
+                    </div>
+
+                    <div class="relative group mb-6 overflow-hidden rounded-2xl border border-gray-800 aspect-video">
+                        {% if req.screenshot %}
+                        <img src="{{ url_for('static', filename='uploads/screenshots/' + req.screenshot) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <a href="{{ url_for('static', filename='uploads/screenshots/' + req.screenshot) }}" target="_blank" class="bg-white text-black px-6 py-2 rounded-full text-[10px] font-black uppercase">Enlarge Proof</a>
+                        </div>
+                        {% else %}
+                        <div class="w-full h-full bg-gray-900 flex items-center justify-center">
+                            <p class="text-[10px] text-gray-600 uppercase">No Screenshot Provided</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex gap-2">
+                        <a href="{{ url_for('approve_plan', id=req.id) }}" class="flex-1 bg-green-500 hover:bg-green-400 text-black py-3 rounded-2xl text-[10px] font-black uppercase text-center transition">Approve</a>
+                        <a href="{{ url_for('reject_plan', id=req.id) }}" class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white py-3 rounded-2xl text-[10px] font-black uppercase text-center transition">Reject</a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-span-full py-16 text-center glass rounded-[40px] border-dashed border-2 border-gray-800">
+                    <i class="fas fa-ghost text-4xl text-gray-800 mb-4"></i>
+                    <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">Zero Pending Upgrades</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <h2 class="text-sm font-black text-gray-500 uppercase tracking-[4px] mb-6 flex items-center">
+                <i class="fas fa-money-bill-transfer mr-2 text-blue-500"></i> Pending Withdrawals
+            </h2>
+            <div class="glass rounded-[40px] overflow-hidden">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-white/5 uppercase font-black text-gray-400">
+                        <tr>
+                            <th class="p-5">User ID</th>
+                            <th class="p-5">Amount</th>
+                            <th class="p-5">Details (Account)</th>
+                            <th class="p-5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        {% for w in withdraws %}
+                        <tr class="hover:bg-white/[0.02] transition">
+                            <td class="p-5 font-bold">#{{ w.user_id }}</td>
+                            <td class="p-5 text-green-500 font-black italic">Rs. {{ w.amount }}</td>
+                            <td class="p-5 text-gray-400">{{ w.details }}</td>
+                            <td class="p-5 text-right flex justify-end gap-2">
+                                <button class="bg-blue-600 px-4 py-2 rounded-xl font-black uppercase text-[10px]">Paid</button>
+                                <button class="bg-red-600/20 text-red-500 px-4 py-2 rounded-xl font-black uppercase text-[10px]">Reject</button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="p-10 text-center text-gray-600 font-bold uppercase tracking-widest">No pending payouts!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Funds | PaisaPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #010409; color: #e6edf3; }
+        .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid #30363d; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0d1117]">
+        <a href="/" class="text-gray-400 hover:text-white transition font-bold text-sm">
+            <i class="fas fa-arrow-left mr-2"></i> BACK TO DASHBOARD
+        </a>
+        <span class="text-green-500 font-black tracking-widest uppercase">Cashout Portal</span>
+    </nav>
+
+    <main class="flex-1 flex items-center justify-center p-6">
+        <div class="glass w-full max-w-md p-10 rounded-[40px] shadow-2xl border-t-4 border-green-600">
+            <div class="text-center mb-10">
+                <div class="w-16 h-16 bg-green-600/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-university text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-black italic uppercase">Withdraw</h2>
+                <p class="text-gray-500 text-xs font-bold mt-2">Available: <span class="text-white">Rs. {{ "%.2f"|format(user.balance) }}</span></p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="mb-6 p-4 rounded-2xl text-xs font-bold {% if category=='error' %}bg-red-500/10 text-red-500{% else %}bg-green-500/10 text-green-500{% endif %}">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/submit_withdrawal" method="POST" class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-black text-gray-500 uppercase ml-2 tracking-widest">Select Method</label>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="method" value="EasyPaisa" class="hidden peer" checked>
+                            <div class="p-4 border border-gray-800 rounded-2xl text-center peer-checked:border-green-500 peer-checked:bg-green-500/5 transition">
+                                <p class="text-xs font-black">EasyPaisa</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="method" value="JazzCash" class="hidden peer">
+                            <div class="p-4 border border-gray-800 rounded-2xl text-center peer-checked:border-yellow-500 peer-checked:bg-yellow-500/5 transition">
+                                <p class="text-xs font-black">JazzCash</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-gray-500 uppercase ml-2 tracking-widest">Account Number</label>
+                    <input type="text" name="details" placeholder="03xxxxxxxxx" 
+                           class="w-full bg-gray-900/50 border border-gray-800 p-4 rounded-2xl mt-2 outline-none focus:border-green-500 font-bold" required>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-gray-500 uppercase ml-2 tracking-widest">Amount (PKR)</label>
+                    <input type="number" name="amount" min="500" placeholder="Min. 2000" 
+                           class="w-full bg-gray-900/50 border border-gray-800 p-4 rounded-2xl mt-2 outline-none focus:border-green-500 font-black text-xl" required>
+                    <p class="text-[9px] text-gray-600 mt-2 italic px-2">* 5% Processing fee will be applied.</p>
+                </div>
+
+                <button type="submit" class="w-full bg-white text-black py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-green-500 transition-all transform active:scale-95 shadow-xl shadow-green-900/10">
+                    Process Withdrawal
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="p-6 text-center text-[10px] text-gray-600 font-bold uppercase tracking-[4px]">
+        Secure 256-bit Encrypted Transaction
+    </footer>
+
+</body>
+</html>

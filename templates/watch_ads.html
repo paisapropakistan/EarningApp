@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watching Ad... | PaisaPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { background: #010409; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(12px); border: 1px solid #30363d; }
+        .ad-container { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 24px; overflow: hidden; border: 1px solid #30363d; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="glass w-full max-w-xl p-6 md:p-10 rounded-[40px] text-center border-b-8 border-blue-600 shadow-2xl">
+        
+        <div id="adHeader" class="mb-6">
+            <h2 class="text-2xl md:text-3xl font-black italic uppercase mb-1 tracking-tighter">Secure Video Ad</h2>
+            <p class="text-gray-500 text-[10px] uppercase tracking-[3px] font-bold">Stay on page to earn reward</p>
+        </div>
+
+        <div class="ad-container shadow-2xl mb-8 flex items-center justify-center">
+            <div id="timerDisplay" class="hidden absolute top-4 right-4 bg-red-600 text-white font-black px-5 py-2 rounded-full text-xl z-50 border border-white/20 shadow-lg">
+                30s
+            </div>
+
+            <div id="realAdSpace" class="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
+                <div id="adPlaceholder" class="text-center">
+                    <button onclick="startAdFlow()" id="playBtn" class="bg-blue-600 hover:bg-blue-500 text-white w-20 h-20 rounded-full mb-4 shadow-xl flex items-center justify-center mx-auto transition-transform transform hover:scale-110">
+                        <i class="fas fa-play text-3xl ml-1"></i>
+                    </button>
+                    <p id="instructionText" class="text-sm font-bold text-gray-300">Click Play to Watch Ad & Earn</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="actionArea" class="space-y-4">
+            <div id="status" class="hidden items-center justify-center gap-2">
+                <span class="w-2 h-2 bg-blue-500 rounded-full animate-ping"></span>
+                <p class="text-blue-400 font-black text-xs uppercase tracking-widest italic">Watching Video...</p>
+            </div>
+
+            <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-black text-xl transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-green-900/20 uppercase">
+                CLAIM REWARD
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 5; // 5 seconds timer
+        const timerDisplay = document.getElementById('timerDisplay');
+        const claimBtn = document.getElementById('claimBtn');
+        const statusText = document.getElementById('status');
+        const adPlaceholder = document.getElementById('adPlaceholder');
+
+        function startAdFlow() {
+            const smartLink = "https://www.effectivegatecpm.com/ttxab1apk?key=ff3787bca68174c5d3f19d400114a1f2";
+            window.open(smartLink, '_blank');
+
+            document.getElementById('playBtn').classList.add('hidden');
+            document.getElementById('instructionText').classList.add('hidden');
+            timerDisplay.classList.remove('hidden');
+            statusText.classList.remove('hidden');
+            statusText.classList.add('flex');
+            
+            adPlaceholder.innerHTML = `
+                <i class="fas fa-circle-notch fa-spin text-4xl text-blue-500 mb-4"></i>
+                <p class="text-sm font-bold text-gray-300">Premium Ad is Streaming...</p>
+            `;
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                if(timeLeft >= 0) { timerDisplay.innerText = timeLeft + "s"; }
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerDisplay.classList.add('hidden');
+                    statusText.classList.remove('flex');
+                    statusText.classList.add('hidden');
+                    claimBtn.classList.remove('hidden');
+                    adPlaceholder.innerHTML = `
+                        <i class="fas fa-check-circle text-5xl text-green-500 mb-4 animate-bounce"></i>
+                        <p class="text-lg font-bold text-green-400">Ad Completed!</p>
+                    `;
+                }
+            }, 1000);
+        }
+
+        claimBtn.addEventListener('click', async () => {
+            claimBtn.disabled = true;
+            claimBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> PROCESSING...';
+
+            try {
+                // API point change kiya taake Python function se match kare
+                const response = await fetch('/add_reward'); 
+                
+                if (response.ok) {
+                    alert("Rs. 0.50 Added Successfully!");
+                    // Index par jane ki bjaye page reload karo taake agla ad dekh sake
+                    window.location.reload(); 
+                } else {
+                    alert("Reward already claimed or limit reached!");
+                    window.location.reload();
+                }
+            } catch (err) {
+                alert("Network Error!");
+                claimBtn.disabled = false;
+                claimBtn.innerText = "CLAIM REWARD";
+            }
+        });
+    </script>
+</body>
+</html>

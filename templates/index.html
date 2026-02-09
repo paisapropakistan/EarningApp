@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaisaPro | Pakistan's No.1 Earning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #010409; color: #e6edf3; overflow-x: hidden; }
+        .glass { background: rgba(13, 17, 23, 0.7); backdrop-filter: blur(12px); border: 1px solid #30363d; }
+        .btn-premium { background: linear-gradient(90deg, #ca8a04, #eab308); color: black; font-weight: 900; }
+        
+        /* Advanced Animations */
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .ticker-content { display: inline-block; animation: ticker 25s linear infinite; white-space: nowrap; }
+        
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(22, 163, 74, 0.15) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body>
+<nav class="sticky top-0 z-50 glass border-b border-gray-800 px-4 md:px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+        <div class="bg-green-600 p-2 rounded-xl text-white shadow-lg shadow-green-500/30">
+            <i class="fas fa-coins text-base md:text-lg"></i>
+        </div>
+        <span class="text-lg md:text-2xl font-black tracking-tighter uppercase">Paisa<span class="text-green-500">Pro</span></span>
+    </div>
+
+    <div class="hidden md:flex gap-8 text-[10px] font-black uppercase tracking-[2px] text-gray-400">
+        <a href="/" class="hover:text-green-500 transition">Dashboard</a>
+        <a href="/watch-ads" class="hover:text-green-500 transition">Earn Money</a>
+        <a href="/withdraw" class="hover:text-green-500 transition">Withdraw</a>
+        <a href="#plans" class="hover:text-green-500 transition">VIP Plans</a>
+    </div>
+
+    <div class="flex items-center gap-2 md:gap-4">
+        {% if not user %}
+            <a href="/login" class="text-[10px] font-bold text-gray-400 hover:text-white">LOGIN</a>
+            <a href="/register" class="bg-white text-black px-4 md:px-6 py-2 rounded-full text-[10px] font-black hover:bg-green-500 transition transform hover:scale-105">JOIN</a>
+        {% else %}
+            
+            {% if user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" 
+               class="bg-red-600 text-white p-2 md:px-4 md:py-2 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border-2 border-white/20 flex items-center justify-center">
+               <i class="fas fa-user-shield"></i>
+               <span class="hidden md:inline ml-1">Admin Panel</span>
+            </a>
+            {% endif %}
+
+            <div class="flex items-center gap-2 bg-gray-900/80 p-1 md:p-1.5 md:pr-5 rounded-full border border-gray-800">
+                <div class="w-7 h-7 md:w-8 md:h-8 bg-green-600 rounded-full flex items-center justify-center font-bold text-xs md:text-sm shadow-inner uppercase">{{ user.username[0] }}</div>
+                <div class="flex flex-col pr-2 md:pr-0">
+                    <span class="text-[7px] md:text-[8px] text-gray-500 font-bold uppercase leading-none">Balance</span>
+                    <span class="text-[10px] md:text-xs font-black text-green-500 leading-none">Rs. {{ "%.2f"|format(user.balance) }}</span>
+                </div>
+            </div>
+
+            <a href="/logout" class="text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition text-sm md:text-base">
+                <i class="fas fa-power-off"></i>
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+
+    <div class="bg-green-500/5 border-b border-green-500/10 py-2.5 overflow-hidden">
+        <div class="ticker-content text-[10px] font-bold text-green-400 uppercase tracking-widest">
+            ● USER @ALI_KHAN JUST WITHDREW RS. 5,000 VIA JAZZCASH ● NEW VIP ADS ADDED FOR DIAMOND MEMBERS ● RS. 200 BONUS ON EVERY 5 REFERRALS ● 100% SECURE PAYOUTS ● 
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto p-4 lg:p-10 hero-gradient">
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="bg-blue-500/20 border border-blue-500/50 p-4 rounded-2xl text-blue-400 text-sm font-bold mb-8 animate-bounce">
+                <i class="fas fa-info-circle mr-2"></i> {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+<section class="mt-16 mb-12">
+    <div class="text-center mb-10">
+        <h3 class="text-[10px] font-black text-green-500 uppercase tracking-[4px] mb-2">Tutorial Guide</h3>
+        <h2 class="text-4xl font-black italic uppercase tracking-tighter text-white">How It <span class="text-green-500">Works?</span></h2>
+        <p class="text-gray-500 text-xs mt-2 max-w-sm mx-auto font-medium">Follow these simple steps to start earning Rs. 150 - 500 daily with PaisaPro.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div class="glass p-4 rounded-[40px] border border-gray-800 shadow-2xl shadow-green-900/10 relative overflow-hidden group">
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-green-600/10 rounded-full blur-3xl"></div>
+            
+            <div class="relative aspect-video rounded-[30px] overflow-hidden border border-gray-700">
+                <iframe class="w-full h-full" 
+                        src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="space-y-4">
+            <div class="glass p-6 rounded-3xl border-l-4 border-green-500 hover:translate-x-2 transition duration-300">
+                <div class="flex gap-4 items-center">
+                    <span class="w-10 h-10 bg-green-600/20 text-green-500 rounded-xl flex items-center justify-center font-black text-lg italic">01</span>
+                    <div>
+                        <h4 class="text-sm font-black uppercase text-white">Create Account</h4>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase">Register and login to your dashboard.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass p-6 rounded-3xl border-l-4 border-blue-500 hover:translate-x-2 transition duration-300">
+                <div class="flex gap-4 items-center">
+                    <span class="w-10 h-10 bg-blue-600/20 text-blue-500 rounded-xl flex items-center justify-center font-black text-lg italic">02</span>
+                    <div>
+                        <h4 class="text-sm font-black uppercase text-white">Choose Your Plan</h4>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase">Upgrade to Gold or Diamond for faster earnings.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass p-6 rounded-3xl border-l-4 border-purple-500 hover:translate-x-2 transition duration-300">
+                <div class="flex gap-4 items-center">
+                    <span class="w-10 h-10 bg-purple-600/20 text-purple-500 rounded-xl flex items-center justify-center font-black text-lg italic">03</span>
+                    <div>
+                        <h4 class="text-sm font-black uppercase text-white">Watch Ads & Earn</h4>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase">Complete your daily ads limit and withdraw cash.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-8">
+    <div class="glass p-5 rounded-[30px] text-center border-t-2 border-green-500/30">
+        <i class="fas fa-users text-green-500 text-xl mb-2"></i>
+        <p class="text-xl font-black italic">50K+</p>
+        <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Active Earners</p>
+    </div>
+    
+    <div class="glass p-5 rounded-[30px] text-center border-t-2 border-blue-500/30">
+        <i class="fas fa-hand-holding-usd text-blue-500 text-xl mb-2"></i>
+        <p class="text-xl font-black italic">1.2M</p>
+        <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Paid Out (PKR)</p>
+    </div>
+
+    <div class="glass p-5 rounded-[30px] text-center border-t-2 border-purple-500/30">
+        <i class="fas fa-shield-alt text-purple-500 text-xl mb-2"></i>
+        <p class="text-xl font-black italic">24/7</p>
+        <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Secure Servers</p>
+    </div>
+
+    <div class="glass p-5 rounded-[30px] text-center border-t-2 border-yellow-500/30">
+        <i class="fas fa-bolt text-yellow-500 text-xl mb-2"></i>
+        <p class="text-xl font-black italic">Fast</p>
+        <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Auto Payouts</p>
+    </div>
+</div>
+
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div class="glass p-8 rounded-[40px] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-green-600/10 rounded-full blur-3xl group-hover:bg-green-600/20 transition"></div>
+        <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Available to Withdraw</p>
+        
+        <h2 class="text-5xl font-black italic">Rs. {{ "%.2f"|format(user.balance) if user else '0.00' }}</h2>
+        
+        <a href="{{ url_for('withdraw_page') }}" class="mt-6 inline-block bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-tighter transition shadow-lg shadow-green-900/20">
+            Withdraw Now
+        </a>
+    </div>
+
+
+<p class="text-4xl font-black text-blue-500">
+    {{ user.daily_ads if user else '0' }} 
+    <span class="text-xl text-gray-600 italic">
+        / {% if user.plan == 'Diamond' %}1000{% elif user.plan == 'Gold' %}700{% else %}300{% endif %}
+    </span>
+</p>
+
+<div class="w-full bg-gray-800 h-3 mt-6 rounded-full overflow-hidden border border-gray-700/50 shadow-inner">
+    <div class="bg-blue-500 h-full transition-all duration-700 ease-in-out shadow-[0_0_15px_rgba(59,130,246,0.6)]" 
+         style="width: {{ (user.daily_ads / (1000 if user.plan == 'Diamond' else (700 if user.plan == 'Gold' else 300)) * 100) if user else 0 }}%">
+    </div>
+</div>
+
+<p class="text-[9px] text-blue-400 mt-2 font-black uppercase tracking-[2px]">
+    {% if user.plan == 'Diamond' %}
+        Diamond Goal: 1000 Ads (Rs. 1000)
+    {% else %}
+        {{ user.plan }} Goal: 700 Ads (Rs. 500)
+    {% endif %}
+</p>
+
+
+        
+        <div class="glass p-8 rounded-[40px] flex flex-col justify-center border-b-4 border-purple-600">
+            <p class="text-gray-500 text-[10px] font-black uppercase mb-2">Referral Earnings</p>
+            <p class="text-3xl font-black text-purple-400">Rs. 100.00</p>
+        </div>
+    </div>
+</div>
+
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <section class="glass p-12 rounded-[50px] text-center border-t-4 border-green-500 relative">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-600 text-black font-black px-6 py-1 rounded-full text-[10px] uppercase">Active Earning</div>
+                    <h3 class="text-3xl font-black mb-4 uppercase italic">Premium Ad Network</h3>
+                    <p class="text-gray-400 text-sm mb-10 max-w-md mx-auto">Watch simple 30-second video ads and get paid directly into your wallet. No hidden charges.</p>
+                    <a href="{{ url_for('watch_ads_page') }}" class="block w-full bg-white text-black py-6 rounded-3xl text-2xl font-black hover:bg-green-400 transition transform hover:-translate-y-1 shadow-2xl shadow-green-500/10">
+                        <i class="fas fa-play-circle mr-3"></i> START WATCHING
+                    </a>
+                </section>
+
+                <div id="plans" class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                    <div class="glass p-8 rounded-[40px] border border-yellow-600/20 hover:border-yellow-500/50 transition">
+                        <div class="flex justify-between items-start mb-6">
+                            <h4 class="text-yellow-500 font-black text-xl italic uppercase">Gold Plan</h4>
+                            <span class="bg-yellow-500/10 text-yellow-500 text-[8px] font-black px-2 py-1 rounded">MOST POPULAR</span>
+                        </div>
+                        <p class="text-4xl font-black mb-6">Rs. 1500</p>
+                        <ul class="space-y-4 mb-8">
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Rs. 0.60 Per Ad Reward</li>
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 700 Ads Daily Limit</li>
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i> 700 R.S Per Day Earn</li>
+                        </ul>
+                        </ul>
+                        <button onclick="openPlanModal('Gold', 1000)" class="w-full btn-premium py-4 rounded-2xl uppercase text-xs tracking-widest">Upgrade Now</button>
+                    </div>
+
+                    <div class="glass p-8 rounded-[40px] border border-blue-600/20 hover:border-blue-500/50 transition">
+                        <h4 class="text-blue-500 font-black text-xl italic uppercase mb-6">Diamond VIP</h4>
+                        <p class="text-4xl font-black mb-6">Rs. 2000</p>
+                        <ul class="space-y-4 mb-8">
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i> Rs. 1.0 Per Ad Earn</li>
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i> 1000 Daily Ads</li>
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i> 1000 R.s Daily Earn</li>
+                        </ul>
+                        </ul>
+                        <button onclick="openPlanModal('Diamond', 1500)" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest">Upgrade Now</button>
+                    </div>
+                </div>
+            </div>
+
+           <!-- <div class="space-y-6">
+                <div class="glass p-8 rounded-[40px] text-center">
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Lucky Spinner</p>
+                    <div class="w-40 h-40 mx-auto bg-gray-800 rounded-full border-8 border-gray-900 shadow-2xl relative flex items-center justify-center mb-6 overflow-hidden">
+                        <div class="w-full h-full absolute inset-0 bg-gradient-to-tr from-green-500/10 to-transparent"></div>
+                        <i class="fas fa-gift text-4xl text-gray-700"></i>
+                    </div>
+                    <button class="w-full bg-gray-800 hover:bg-white hover:text-black py-3 rounded-2xl text-[10px] font-black uppercase transition">Spin (Rs. 20)</button>
+                </div>
+                -->
+
+                <div class="bg-green-600 p-8 rounded-[40px] text-black">
+                    <h4 class="text-xl font-black uppercase mb-2">Need Support?</h4>
+                    <p class="text-xs font-bold mb-6 opacity-80">Payment nahi mili ya plan active nahi hua? Hamein WhatsApp karein.</p>
+                    <a href="https://wa.me/923197556376" class="flex items-center justify-center gap-2 bg-black text-white w-full py-4 rounded-2xl text-xs font-black uppercase hover:opacity-90 transition">
+                        <i class="fab fa-whatsapp text-lg"></i> Contact Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="glass p-6 rounded-[30px] border border-purple-500/20">
+    <p class="text-[10px] text-gray-400 font-black uppercase mb-3">Your Unique Referral Link</p>
+    <div class="flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-gray-700">
+        <input type="text" readonly id="myRefLink" 
+               value="{{ request.host_url }}register?ref={{ user.referral_code }}" 
+               class="bg-transparent text-[11px] text-purple-400 font-bold outline-none flex-1 px-1">
+        <button onclick="copyRef()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase transition">Copy</button>
+    </div>
+    <p class="text-[9px] text-gray-500 mt-2 italic font-bold">Earn Rs. 50 for every friend who joins!</p>
+</div>
+
+<script>
+function copyRef() {
+    var copyText = document.getElementById("myRefLink");
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+    alert("Link Copied! Ab doston ko bhejein aur Rs. 50 kamayein.");
+}
+</script>
+
+
+<div class="flex items-center justify-center gap-2 my-6">
+    <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+    </span>
+    <p class="text-[9px] font-black uppercase tracking-[2px] text-gray-400">
+        <span class="text-white">{{ online }}</span> Users Online Now
+    </p>
+</div>
+
+<div class="glass p-6 rounded-[30px] border border-yellow-500/20 mb-8 flex justify-between items-center shadow-lg shadow-yellow-900/5">
+    <div class="flex items-center gap-4">
+        <div class="bg-yellow-600/20 p-3 rounded-2xl">
+            <i class="fas fa-gift text-yellow-500 text-xl"></i>
+        </div>
+    <    <div>
+            <h3 class="text-sm font-black uppercase tracking-widest text-white leading-none mb-1">Daily Reward</h3>
+            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">Get free cash every 24h</p>
+        </div>
+    </div>
+    <a href="{{ url_for('claim_daily') }}" class="bg-yellow-600 hover:bg-yellow-500 px-5 py-3 rounded-2xl text-[10px] font-black uppercase transition-all transform active:scale-95">
+        Claim Now
+    </a>
+</div>
+
+<div class="glass p-8 rounded-[40px] border border-white/5 shadow-2xl">
+    <div class="flex items-center justify-center gap-3 mb-8">
+        <i class="fas fa-trophy text-yellow-500 text-2xl"></i>
+        <h2 class="text-xl font-black italic uppercase tracking-tighter">Top <span class="text-green-500">Earners</span></h2>
+    </div>
+    
+    <div class="space-y-4">
+        {% for earner in earners %}
+        <div class="flex justify-between items-center bg-white/5 p-5 rounded-[25px] border border-white/5 transition hover:border-green-500/30">
+            <div class="flex items-center gap-4">
+                <span class="text-lg font-black {% if loop.index == 1 %}text-yellow-500{% elif loop.index == 2 %}text-gray-400{% else %}text-orange-700{% endif %}">
+                    #{{ loop.index }}
+                </span>
+                <div>
+                    <p class="text-[11px] font-black uppercase text-white">{{ earner.username[:3] }}***</p>
+                    <p class="text-[9px] text-gray-500 font-bold">Verified Earner</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-black text-green-500">Rs. {{ "{:,.0f}".format(earner.balance) }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<section class="max-w-4xl mx-auto my-20 px-6">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-black italic uppercase tracking-tighter text-white">Common <span class="text-green-500">Questions</span></h2>
+        <p class="text-gray-500 text-[10px] font-bold mt-2 uppercase tracking-[3px]">Everything you need to know</p>
+    </div>
+
+    <div class="space-y-4">
+        <div class="glass rounded-[25px] border border-white/5 overflow-hidden">
+            <button onclick="toggleFAQ(1)" class="w-full flex justify-between items-center p-6 text-left hover:bg-white/5 transition">
+                <span class="font-black uppercase text-xs tracking-widest text-gray-200">1. Minimum withdraw kitna hai?</span>
+                <i id="icon-1" class="fas fa-plus text-green-500 transition-transform"></i>
+            </button>
+            <div id="faq-1" class="hidden p-6 pt-0 text-sm text-gray-400 font-medium border-t border-white/5">
+                PaisaPro par minimum withdrawal limit Rs. 2000 hai. Aap apna balance JazzCash ya EasyPaisa ke zariye nikalwa sakte hain.
+            </div>
+        </div>
+
+        <div class="glass rounded-[25px] border border-white/5 overflow-hidden">
+            <button onclick="toggleFAQ(2)" class="w-full flex justify-between items-center p-6 text-left hover:bg-white/5 transition">
+                <span class="font-black uppercase text-xs tracking-widest text-gray-200">2. Referral bonus kab milta hai?</span>
+                <i id="icon-2" class="fas fa-plus text-green-500 transition-transform"></i>
+            </button>
+            <div id="faq-2" class="hidden p-6 pt-0 text-sm text-gray-400 font-medium border-t border-white/5">
+                Jaise hi aapka koi dost aapke link se register karega, Rs. 50 aapke balance mein foran add ho jayenge.
+            </div>
+        </div>
+
+        <div class="glass rounded-[25px] border border-white/5 overflow-hidden">
+            <button onclick="toggleFAQ(3)" class="w-full flex justify-between items-center p-6 text-left hover:bg-white/5 transition">
+                <span class="font-black uppercase text-xs tracking-widest text-gray-200">3. Withdrawal mein kitna time lagta hai?</span>
+                <i id="icon-3" class="fas fa-plus text-green-500 transition-transform"></i>
+            </button>
+            <div id="faq-3" class="hidden p-6 pt-0 text-sm text-gray-400 font-medium border-t border-white/5">
+                Saari withdrawal requests 24 ghanton ke andar process kar di jati hain.
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function toggleFAQ(id) {
+        const content = document.getElementById(`faq-${id}`);
+        const icon = document.getElementById(`icon-${id}`);
+        
+        // Sab ko close karne ke liye (Optional)
+        // document.querySelectorAll('[id^="faq-"]').forEach(el => el.classList.add('hidden'));
+
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.style.transform = 'rotate(45deg)';
+        } else {
+            content.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+</script>
+
+
+
+    <footer class="glass border-t border-gray-800 mt-20 pt-16 pb-10 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="bg-green-600 p-1.5 rounded-lg text-white"><i class="fas fa-coins"></i></div>
+                    <span class="text-xl font-black uppercase tracking-tighter">Paisa<span class="text-green-500">Pro</span></span>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed max-w-sm">
+                    PaisaPro is the leading digital advertising network in Pakistan, allowing users to monetize their time by watching premium advertisements. Join over 50,000 active earners today.
+                </p>
+                <div class="flex gap-4 mt-8">
+                    <a href="https://www.facebook.com/share/1Bwv1Y3yMg/" class="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-xs hover:bg-green-600 transition"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@paisa.pro.pakista?_r=1&_t=ZS-93lGZswAcL9" class="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-xs hover:bg-green-600 transition"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://youtube.com/@paisapropakistan?si=6zVrVa3PkqdNHGHd" class="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-xs hover:bg-green-600 transition"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="text-xs font-black uppercase text-green-500 mb-6 tracking-widest">Platform</h5>
+                <ul class="space-y-4 text-[11px] font-bold text-gray-400">
+                    <li><a href="/watch-ads" class="hover:text-white transition">Earn Money</a></li>
+                    <li><a href="/withdraw" class="hover:text-white transition">Withdraw Funds</a></li>
+                    <li><a href="#plans" class="hover:text-white transition">Premium Plans</a></li>
+                    <li><a href="#" class="hover:text-white transition">Referral Program</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="text-xs font-black uppercase text-green-500 mb-6 tracking-widest">Contact Us</h5>
+                <ul class="space-y-4 text-[11px] font-bold text-gray-400">
+                    <li class="flex items-center gap-2"><i class="fas fa-envelope text-green-600"></i> paisapropakistan@gmail.com</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-green-600"></i> Lahore, Pakistan</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-clock text-green-600"></i> 70:00 AM - 08:00 PM</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto pt-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] text-gray-600 font-black uppercase tracking-widest">© 2026 PAISAPRO NETWORK. REGISTERED IN PAKISTAN.</p>
+            <div class="flex gap-6 text-[9px] font-black text-gray-600 uppercase">
+                <a href="#" class="hover:text-gray-400">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-400">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+        <div id="buyPlanModal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6">
+        <div class="glass p-10 rounded-[50px] w-full max-w-md relative">
+            <button onclick="closeModal()" class="absolute top-8 right-8 text-gray-500 hover:text-white transition"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-3xl font-black mb-2 italic">UPGRADE TO <span id="selectedPlan" class="text-yellow-500">GOLD</span></h3>
+            <p class="text-gray-500 text-xs mb-8">Pay the amount to the number below and enter TID.</p>
+
+            <div class="bg-black p-6 rounded-3xl border border-gray-800 mb-8">
+                <p class="text-[10px] text-gray-500 font-black uppercase mb-2">EasyPaisa / JazzCash Number</p>
+                <p class="text-2xl font-black text-green-500 tracking-wider">0342-2056854</p>
+                <p class="text-[10px] text-white font-bold opacity-60">Account Holder Name: Ali Abbas</p>
+            </div>
+
+            <form action="/buy_plan" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <input type="hidden" name="plan_name" id="formPlanName">
+                <input type="hidden" name="amount" id="formPlanPrice">
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Payment Screenshot</label>
+                    <input type="file" name="screenshot" accept="image/*" 
+                           class="w-full bg-gray-900 border border-gray-800 p-4 rounded-2xl text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-green-600 file:text-white hover:file:bg-green-500 cursor-pointer" 
+                           required>
+                </div>
+
+                <input type="text" name="tid" placeholder="Enter Transaction ID (TID)" class="w-full bg-gray-900 border border-gray-800 p-5 rounded-2xl outline-none text-white font-bold placeholder:text-gray-700 focus:border-green-500" required>
+                
+                <button type="submit" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-green-500/5">Verify My Payment</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <script>
+        function openPlanModal(name, price) {
+            document.getElementById('selectedPlan').innerText = name.toUpperCase();
+            document.getElementById('formPlanName').value = name;
+            document.getElementById('formPlanPrice').value = price;
+            document.getElementById('buyPlanModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('buyPlanModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PaisaPro - Pakistan's No.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #010409; 
+            color: #e6edf3; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(20px); border: 1px solid #30363d; }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+        }
+        .input-focus:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="hero-gradient">
+
+    <nav class="glass border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="bg-green-600 p-2 rounded-xl text-white shadow-lg shadow-green-500/30">
+                <i class="fas fa-coins text-lg"></i>
+            </div>
+            <span class="text-xl font-black tracking-tighter uppercase">Paisa<span class="text-green-500">Pro</span></span>
+        </div>
+        <a href="{{ url_for('index') }}" class="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition">
+            <i class="fas fa-arrow-left mr-1"></i> Back to Home
+        </a>
+    </nav>
+
+    <div class="flex-grow flex items-center justify-center p-6">
+        <div class="glass w-full max-w-md p-10 rounded-[40px] shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-600/20 rounded-full blur-3xl"></div>
+            
+            <div class="text-center mb-10">
+                <h2 class="text-4xl font-black italic uppercase tracking-tighter">Welcome <span class="text-green-500">Back</span></h2>
+                <p class="text-gray-500 text-xs font-bold mt-2 uppercase tracking-widest">Login to start earning</p>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                  <div class="bg-red-500/10 border border-red-500/30 text-red-500 text-[11px] font-black p-3 rounded-xl flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle"></i> {{ message }}
+                  </div>
+                {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('login') }}" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Email Address</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                        <input type="email" name="email" required 
+                               class="w-full bg-gray-900/50 border border-gray-800 p-4 pl-12 rounded-2xl text-sm font-bold placeholder:text-gray-700 input-focus transition-all"
+                               placeholder="name@example.com">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center ml-4">
+                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Password</label>
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                        <input type="password" name="password" required 
+                               class="w-full bg-gray-900/50 border border-gray-800 p-4 pl-12 rounded-2xl text-sm font-bold placeholder:text-gray-700 input-focus transition-all"
+                               placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-white/5 hover:bg-green-500 transition transform hover:-translate-y-1 active:scale-95 mt-4">
+                    Sign In
+                </button>
+            </form>
+
+            <p class="text-center mt-8 text-gray-500 text-[11px] font-bold">
+                DON'T HAVE AN ACCOUNT? 
+                <a href="{{ url_for('register') }}" class="text-green-500 hover:text-green-400 transition ml-1 uppercase">Create Account</a>
+            </p>
+        </div>
+    </div>
+
+    <footer class="p-8 text-center">
+        <p class="text-[9px] text-gray-600 font-black uppercase tracking-[3px]">© 2026 PAISAPRO NETWORK • SECURED</p>
+    </footer>
+
+</body>
+</html>
