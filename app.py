@@ -347,58 +347,104 @@ def add_reward():
 
 
 
-# --- ADMIN DASHBOARD ---
+# ==========================================
+#         ADMIN PANEL ROUTES (STABLE)
+# ==========================================
+
+# --- 1. ADMIN DASHBOARD ---
 @app.route("/admin/dashboard")
 def admin_dashboard():
-    # 1. Check login
+    # Login Check
     if "user_id" not in session:
         return redirect(url_for('login'))
     
-    # 2. Check Admin Power
     user = User.query.get(session["user_id"])
-    if not user or not user.is_admin:
-        return "Unauthorized Access!", 403
-
-    # 3. Get Pending Data
-    upgrades = PaymentRequest.query.filter_by(status='Pending').all()
-    # Transaction table se pending withdraws uthao
-    withdraws = Transaction.query.filter_by(status='Pending').all() 
     
-    return render_template("admin_panel.html", upgrades=upgrades, withdraws=withdraws)
+    # HARDCODED ADMIN ACCESS (Ali Abbas Bhai Power)
+    if user and (user.email == 'paisapropakistan@gmail.com' or 
+                 user.username == 'aliabbas786' or 
+                 user.is_admin):
+        
+        # Pending Upgrades (Plan changes)
+        upgrades = PaymentRequest.query.filter_by(status='Pending').all()
+        # Pending Withdrawals (Paisa nikalna)
+        withdraws = Transaction.query.filter_by(status='Pending').all() 
+        
+        return render_template("admin_panel.html", upgrades=upgrades, withdraws=withdraws)
+    
+    return "Unauthorized Access!", 403
 
-# --- APPROVE ACTION ---
+# --- 2. APPROVE PLAN UPGRADE ---
 @app.route("/admin/approve_plan/<int:id>")
 def approve_plan(id):
     if "user_id" not in session: return redirect(url_for('login'))
     admin = User.query.get(session["user_id"])
-    if not admin.is_admin: return "Unauthorized", 403
+    if not (admin.email == 'paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized", 403
 
     req = PaymentRequest.query.get(id)
     if req:
         user = User.query.get(req.user_id)
         user.plan = req.plan_name
-        # Agar plan Diamond hai to ads unlimited (e.g. 9999) kar do
+        
+        # Setting Ad Limits based on Plan
         if req.plan_name == 'Diamond':
             user.daily_ads = 1000
+        elif req.plan_name == 'Gold':
+            user.daily_ads = 700
         else:
-            user.daily_ads = 700 # Gold ke liye
+            user.daily_ads = 300
             
         req.status = "Approved"
         db.session.commit()
+        flash(f"User {user.username} approved for {req.plan_name}!", "success")
     return redirect(url_for('admin_dashboard'))
 
-# --- REJECT ACTION ---
+# --- 3. REJECT PLAN UPGRADE ---
 @app.route("/admin/reject_plan/<int:id>")
 def reject_plan(id):
     if "user_id" not in session: return redirect(url_for('login'))
     admin = User.query.get(session["user_id"])
-    if not admin.is_admin: return "Unauthorized", 403
+    if not (admin.email == 'paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized", 403
 
     req = PaymentRequest.query.get(id)
     if req:
         req.status = "Rejected"
         db.session.commit()
+        flash("Plan request rejected.", "danger")
     return redirect(url_for('admin_dashboard'))
+
+# --- 4. APPROVE WITHDRAW (PAID) ---
+@app.route("/admin/approve_withdraw/<int:id>")
+def approve_withdraw(id):
+    if "user_id" not in session: return redirect(url_for('login'))
+    admin = User.query.get(session["user_id"])
+    if not (admin.email == 'paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized", 403
+
+    trans = Transaction.query.get(id)
+    if trans:
+        trans.status = "Paid"  # Status update kar diya
+        db.session.commit()
+        flash("Withdrawal marked as PAID!", "success")
+    return redirect(url_for('admin_dashboard'))
+
+# --- 5. REJECT WITHDRAW ---
+@app.route("/admin/reject_withdraw/<int:id>")
+def reject_withdraw(id):
+    if "user_id" not in session: return redirect(url_for('login'))
+    admin = User.query.get(session["user_id"])
+    if not (admin.email == 'paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized", 403
+
+    trans = Transaction.query.get(id)
+    if trans:
+        # Pese wapis user ke balance mein daalna (Optional but fair)
+        user = User.query.get(trans.user_id)
+        user.balance += trans.amount
+        
+        trans.status = "Rejected"
+        db.session.commit()
+        flash("Withdrawal rejected and amount refunded.", "danger")
+    return redirect(url_for('admin_dashboard'))
+
 
 
 
