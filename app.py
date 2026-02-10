@@ -129,6 +129,7 @@ def index():
 
 import uuid
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -136,33 +137,26 @@ def register():
         email = request.form.get("email")
         password = generate_password_hash(request.form.get("password"))
         
-        # URL se referral code pakre ga (e.g. ?ref=ABC123)
+        # URL ya Form se referral code pakre ga
         ref_code = request.args.get("ref") or request.form.get("ref_code")
         
         if User.query.filter_by(email=email).first():
             flash("Email pehle se maujood hai!", "error")
             return redirect(url_for("register"))
             
-        # Naya user banate waqt usay Unique UID (referral_code) dena
-        user_uid = str(uuid.uuid4())[:8].upper() # Example: 7F3A2B10
+        # Naya user banate waqt usay Unique UID dena
+        user_uid = str(uuid.uuid4())[:8].upper() 
         
         new_user = User(
             username=username, 
             email=email, 
             password=password,
-            referral_code=user_uid, # User ki apni unique ID
+            referral_code=user_uid,
+            referred_by=ref_code, # Sirf yaad rakhega kisne bulaya, paise abhi nahi milenge
             balance=0.0,
             daily_ads=0,
             plan="Free"
         )
-
-        # REAL PAYOUT LOGIC: Agar referral code valid hai
-        if ref_code:
-            inviter = User.query.filter_by(referral_code=ref_code).first()
-            if inviter:
-                inviter.balance += 50.0  # Inviter ko Rs. 50 mil gaye!
-                new_user.referred_by = ref_code # Track kis ne bulaya
-                print(f"Referral Bonus: Rs. 50 sent to {inviter.username}") # For Server Debugging
         
         db.session.add(new_user)
         db.session.commit()
@@ -170,8 +164,6 @@ def register():
         return redirect(url_for("login"))
         
     return render_template("register.html")
-
-
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -186,6 +178,8 @@ def login():
             return redirect(url_for("index"))
         flash("Ghalat email ya password!", "error")
     return render_template("login.html")
+    
+    
 
 @app.route("/logout")
 def logout():
@@ -225,6 +219,8 @@ def buy_plan():
         flash(f"{plan_name} request submit ho gayi! Admin verify kar raha hai.", "success")
     
     return redirect(url_for("index"))
+
+
 
 @app.route("/withdraw")
 def withdraw_page():
@@ -396,24 +392,38 @@ def admin_dashboard():
 def approve_plan(id):
     if "user_id" not in session: return redirect(url_for('login'))
     admin = User.query.get(session["user_id"])
-    if not (admin.email == 'paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized", 403
+    
+    # Admin Access Check
+    if not (admin.email == 'paisapropakistan@gmail.com' or admin.is_admin): 
+        return "Unauthorized", 403
 
     req = PaymentRequest.query.get(id)
     if req:
         user = User.query.get(req.user_id)
+        
+        # ================= REFERRAL BONUS LOGIC (NEW) =================
+        # 1. Check karein kya is user ko kisi ne invite kiya tha?
+        # 2. Check karein kya ye user pehli baar plan buy kar raha hai (Free to Paid)?
+        if user.referred_by and user.plan == "Free":
+            inviter = User.query.filter_by(referral_code=user.referred_by).first()
+            if inviter:
+                inviter.balance += 50.0  # Inviter ko Rs. 50 mil gaye
+                inviter.referral_balance += 50.0 # Record ke liye
+                print(f"💰 Referral Success: Rs. 50 added to {inviter.username}")
+        # =============================================================
+
+        # Plan Update
         user.plan = req.plan_name
         
-        # Setting Ad Limits based on Plan
-        if req.plan_name == 'Diamond':
-            user.daily_ads = 0
-        elif req.plan_name == 'Gold':
-            user.daily_ads = 0
-        else:
-            user.daily_ads = 0
+        # Reset ads limit on new plan activation
+        user.daily_ads = 0
+        user.last_reset = date.today() # Taake usi din se nayi limit shuru ho
             
         req.status = "Approved"
         db.session.commit()
-        flash(f"User {user.username} approved for {req.plan_name}!", "success")
+        
+        flash(f"User {user.username} approved for {req.plan_name}! Referral bonus processed.", "success")
+        
     return redirect(url_for('admin_dashboard'))
 
 # --- 3. REJECT PLAN UPGRADE ---
