@@ -46,13 +46,14 @@
             <a href="/register" class="bg-white text-black px-4 md:px-6 py-2 rounded-full text-[10px] font-black hover:bg-green-500 transition transform hover:scale-105">JOIN</a>
         {% else %}
             
-            {% if user.is_admin %}
-            <a href="{{ url_for('admin_dashboard') }}" 
-               class="bg-red-600 text-white p-2 md:px-4 md:py-2 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border-2 border-white/20 flex items-center justify-center">
-               <i class="fas fa-user-shield"></i>
-               <span class="hidden md:inline ml-1">Admin Panel</span>
-            </a>
-            {% endif %}
+{% if user.is_admin or user.email == 'paisapropakistan@gmail.com' or user.username == 'aliabbas786' %}
+<a href="{{ url_for('admin_dashboard') }}" 
+   class="bg-red-600 text-white p-2 md:px-4 md:py-2 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border-2 border-white/20 flex items-center justify-center">
+   <i class="fas fa-user-shield"></i>
+   <span class="hidden md:inline ml-1">Admin Panel</span>
+</a>
+{% endif %}
+
 
             <div class="flex items-center gap-2 bg-gray-900/80 p-1 md:p-1.5 md:pr-5 rounded-full border border-gray-800">
                 <div class="w-7 h-7 md:w-8 md:h-8 bg-green-600 rounded-full flex items-center justify-center font-bold text-xs md:text-sm shadow-inner uppercase">{{ user.username[0] }}</div>
