@@ -7,6 +7,9 @@ import os
 from sqlalchemy import text
 import random
 import uuid
+from flask import Flask, send_from_directory, render_template
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+import os
 
 app = Flask(__name__)
 
@@ -89,6 +92,11 @@ with app.app_context():
         pass
 
 # ================= ROUTES =================
+
+# Route to serve images from templates folder
+@app.route('/images/<filename>')
+def template_images(filename):
+    return send_from_directory(os.path.join(app.root_path, 'templates'), filename)
 
 @app.route("/")
 def index():
