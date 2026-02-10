@@ -396,11 +396,11 @@ def approve_plan(id):
         
         # Setting Ad Limits based on Plan
         if req.plan_name == 'Diamond':
-            user.daily_ads = 1000
+            user.daily_ads = 0
         elif req.plan_name == 'Gold':
-            user.daily_ads = 700
+            user.daily_ads = 0
         else:
-            user.daily_ads = 300
+            user.daily_ads = 0
             
         req.status = "Approved"
         db.session.commit()
