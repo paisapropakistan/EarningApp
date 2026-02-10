@@ -275,8 +275,15 @@ def submit_withdrawal():
 def watch_ads_page():
     if "user_id" not in session: return redirect(url_for('login'))
     user = User.query.get(session["user_id"])
-    return render_template("watch_ads.html", user=user)
     
+    # Extra safety: Yahan bhi reset logic daal dein
+    if user.last_reset != date.today():
+        user.daily_ads = 0
+        user.last_reset = date.today()
+        db.session.commit()
+        
+    return render_template("watch_ads.html", user=user)
+
     
     
     
@@ -352,6 +359,8 @@ def add_reward():
         
     # FORCE REDIRECT: Ab ye hamesha ads page par hi rakhega
     return redirect(url_for('watch_ads_page'))
+
+
 
 
 
