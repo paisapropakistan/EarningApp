@@ -185,6 +185,7 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("index"))
+    
 
 @app.route("/buy_plan", methods=["POST"])
 def buy_plan():
@@ -407,9 +408,9 @@ def approve_plan(id):
         if user.referred_by and user.plan == "Free":
             inviter = User.query.filter_by(referral_code=user.referred_by).first()
             if inviter:
-                inviter.balance += 50.0  # Inviter ko Rs. 50 mil gaye
-                inviter.referral_balance += 50.0 # Record ke liye
-                print(f"💰 Referral Success: Rs. 50 added to {inviter.username}")
+                inviter.balance += 100.0  # Inviter ko Rs. 50 mil gaye
+                inviter.referral_balance += 100.0 # Record ke liye
+                print(f"💰 Referral Success: Rs. 100 added to {inviter.username}")
         # =============================================================
 
         # Plan Update
