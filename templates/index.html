@@ -3,60 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PaisaPro | Pakistan's No.1 Earning Platform</title>
+
+    <!-- Primary Title -->
+    <title>Earn Money Online Pakistan | Watch Ads & Earn Daily Cash | PaisaPro</title>
+
+    <!-- Meta Description & Keywords for SEO -->
+    <meta name="description" content="Watch ads and earn real cash daily in Pakistan. Join PaisaPro and start earning Rs. 150-1000 per day by completing simple video ads.">
+    <meta name="keywords" content="earn money online Pakistan, watch ads earn cash, PaisaPro, daily rewards, free cash, online earning">
+    <meta name="author" content="PaisaPro Pakistan">
+
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/1770718259634.png') }}" sizes="32x32">
+<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/png">
+    <!-- Open Graph / Facebook / Messenger -->
+    <meta property="og:title" content="Earn Money Online Pakistan | PaisaPro">
+    <meta property="og:description" content="Watch ads and earn real cash daily in Pakistan. Join PaisaPro and start earning Rs. 150-1000 per day.">
+    <meta property="og:image" content="{{ url_for('static', filename='images/1770718259634.png') }}">
+    <meta property="og:url" content="{{ request.host_url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PaisaPro">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Earn Money Online Pakistan | PaisaPro">
+    <meta name="twitter:description" content="Watch ads and earn real cash daily in Pakistan. Join PaisaPro and start earning Rs. 150-1000 per day.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/1770718259634.png') }}">
+    <meta name="twitter:site" content="@PaisaPro">
+
+    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Optional SEO Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "PaisaPro",
+      "url": "{{ request.host_url }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ request.host_url }}?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Custom Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background: #010409; color: #e6edf3; overflow-x: hidden; }
         .glass { background: rgba(13, 17, 23, 0.7); backdrop-filter: blur(12px); border: 1px solid #30363d; }
         .btn-premium { background: linear-gradient(90deg, #ca8a04, #eab308); color: black; font-weight: 900; }
         
-        /* Advanced Animations */
         @keyframes ticker {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
         .ticker-content { display: inline-block; animation: ticker 25s linear infinite; white-space: nowrap; }
-        
-        .hero-gradient {
-            background: radial-gradient(circle at 50% 50%, rgba(22, 163, 74, 0.15) 0%, transparent 50%);
-        }
+        .hero-gradient { background: radial-gradient(circle at 50% 50%, rgba(22, 163, 74, 0.15) 0%, transparent 50%); }
     
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.6);
-        }
-
-        .modal-content {
-            background: white;
-            font: black;
-            
-            padding: 20px;
-            width: 80%;
-            max-width: 600px;
-            margin: 10% auto;
-            border-radius: 8px;
-            text-align: left;
-        }
-
-        .close {
-            float: right;
-            font-size: 20px;
-            cursor: pointer;
-            color: red;
-        }
-
-        h2 {
-            margin-top: 0;
-        }
-
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background: white; color: black; padding: 20px; width: 80%; max-width: 600px; margin: 10% auto; border-radius: 8px; text-align: left; }
+        .close { float: right; font-size: 20px; cursor: pointer; color: red; }
+        h2 { margin-top: 0; }
     </style>
 </head>
 <body>
