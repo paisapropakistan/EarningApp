@@ -243,7 +243,7 @@ def submit_withdrawal():
         flash("Sahi raqam likhein!", "error")
         return redirect(url_for('withdraw_page'))
     
-    if amount < 2000:
+    if amount < 3000:
         flash("Minimum withdrawal Rs. 2000 hai!", "error")
         return redirect(url_for('withdraw_page'))
     
@@ -295,17 +295,17 @@ def complete_ad():
     if user.plan == "Gold":
         # Gold Plan: Rs. 0.60 per ad
         # Rs. 50 kamane ke liye takreeban 84 ads chahiye
-        limit = 700 
-        reward = 0.60
+        limit = 70
+        reward = 10
     elif user.plan == "Diamond":
         # Diamond Plan: Maan lete hain Rs. 1.0 per ad
-        limit = 1000
-        reward = 1.0
+        limit = 70
+        reward = 15
     else:  
         # Free Plan: Rs. 0.50 per ad
         # Rs. 50 kamane ke liye 100 ads lazmi hain
-        limit = 300
-        reward = 0.50
+        limit = 50
+        reward = 5
     # ======================================================================
 
     # 1. Check limit
@@ -336,14 +336,14 @@ def add_reward():
     
     # Plans ke mutabiq limits (Jo humne pehle set ki thi)
     if user.plan == "Diamond":
-        limit = 1000
-        reward = 1.00
+        limit = 70
+        reward = 15
     elif user.plan == "Gold":
-        limit = 700
-        reward = 0.60
+        limit = 70
+        reward = 10
     else:
-        limit = 300
-        reward = 0.50
+        limit = 50
+        reward = 5
 
     # Ads Limit Check
     if user.daily_ads < limit:
