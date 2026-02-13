@@ -238,7 +238,7 @@
 <p class="text-4xl font-black text-blue-500">
     {{ user.daily_ads if user else '0' }} 
     <span class="text-xl text-gray-600 italic">
-        / {% if user.plan == 'Diamond' %}1000{% elif user.plan == 'Gold' %}700{% else %}300{% endif %}
+        / {% if user.plan == 'Diamond' %}70{% elif user.plan == 'Gold' %}70{% else %}50{% endif %}
     </span>
 </p>
 
@@ -250,9 +250,9 @@
 
 <p class="text-[9px] text-blue-400 mt-2 font-black uppercase tracking-[2px]">
     {% if user.plan == 'Diamond' %}
-        Diamond Goal: 1000 Ads (Rs. 1000)
+        Diamond Goal: 70 Ads (Rs. 1050)
     {% else %}
-        {{ user.plan }} Goal: 700 Ads (Rs. 500)
+        {{ user.plan }} Goal: 70 Ads (Rs.700)
     {% endif %}
 </p>
 
@@ -284,10 +284,10 @@
                             <h4 class="text-yellow-500 font-black text-xl italic uppercase">Gold Plan</h4>
                             <span class="bg-yellow-500/10 text-yellow-500 text-[8px] font-black px-2 py-1 rounded">MOST POPULAR</span>
                         </div>
-                        <p class="text-4xl font-black mb-6">Rs. 1500</p>
+                        <p class="text-4xl font-black mb-6">Rs. 2000</p>
                         <ul class="space-y-4 mb-8">
-                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Rs. 0.60 Per Ad Reward</li>
-                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 700 Ads Daily Limit</li>
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Rs. 10 Per Ad Reward</li>
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 70 Ads Daily Limit</li>
                             <i class="fas fa-check-circle text-green-500 mr-2"></i> 700 R.S Per Day Earn</li>
                         </ul>
                         </ul>
@@ -296,11 +296,11 @@
 
                     <div class="glass p-8 rounded-[40px] border border-blue-600/20 hover:border-blue-500/50 transition">
                         <h4 class="text-blue-500 font-black text-xl italic uppercase mb-6">Diamond VIP</h4>
-                        <p class="text-4xl font-black mb-6">Rs. 2000</p>
+                        <p class="text-4xl font-black mb-6">Rs. 3000</p>
                         <ul class="space-y-4 mb-8">
-                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i> Rs. 1.0 Per Ad Earn</li>
-                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i> 1000 Daily Ads</li>
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i> 1000 R.s Daily Earn</li>
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i> Rs. 15 Per Ad Earn</li>
+                            <li class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i> 70 Daily Ads</li>
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i> 1050 R.s Daily Earn</li>
                         </ul>
                         </ul>
                         <button onclick="openPlanModal('Diamond', 1500)" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest">Upgrade Now</button>

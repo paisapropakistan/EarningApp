@@ -12,40 +12,38 @@
         .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(12px); border: 1px solid #30363d; }
         .task-container { position: relative; width: 100%; min-height: 280px; background: #0d1117; border-radius: 24px; border: 2px dashed #30363d; }
         .reward-badge { background: linear-gradient(90deg, #10b981, #059669); }
+        .shake { animation: shake 0.5s ease-in-out; border-color: #ef4444 !important; }
+        @keyframes shake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);} }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="glass w-full max-w-xl p-6 md:p-10 rounded-[40px] text-center border-b-8 border-blue-600 shadow-2xl">
+    <div id="mainCard" class="glass w-full max-w-xl p-6 md:p-10 rounded-[40px] text-center border-b-8 border-blue-600 shadow-2xl transition-all">
         
         <div id="adHeader" class="mb-6">
             <div class="reward-badge inline-block text-white text-[10px] px-4 py-1 rounded-full font-black uppercase tracking-widest mb-3 shadow-lg">
-                Earn Rs. 0.50
+                Earn <span id="rewardAmount">Rs. 5</span> per ad
             </div>
             <h2 class="text-3xl md:text-4xl font-black uppercase mb-1 tracking-tighter text-white">Samsung Galaxy Giveaway</h2>
-            <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Complete Email Submission to Unlock</p>
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Stay on the offer page to get paid</p>
         </div>
 
-        <div class="task-container shadow-2xl mb-8 flex items-center justify-center p-6 relative">
-            
-            <div id="timerDisplay" class="hidden absolute top-4 right-4 bg-red-600 text-white font-black px-4 py-1 rounded-lg text-lg z-50 animate-pulse">
-                15s
-            </div>
+        <div class="task-container shadow-2xl mb-8 flex items-center justify-center p-6 relative" id="taskBox">
+            <div id="timerDisplay" class="hidden absolute top-4 right-4 bg-red-600 text-white font-black px-4 py-1 rounded-lg text-lg z-50 animate-pulse">15s</div>
 
             <div id="taskContent" class="w-full">
                 <div id="startState">
                     <div class="bg-blue-600/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-500/30">
-                        <i class="fas fa-envelope-open-text text-4xl text-blue-500"></i>
+                        <i class="fas fa-mouse-pointer text-4xl text-blue-500"></i>
                     </div>
-                    <h3 class="font-bold text-xl mb-2 text-blue-400">Task Instructions:</h3>
-                    <ul class="text-gray-400 text-sm mb-8 space-y-2">
-                        <li>1. Click "Open Offer" below.</li>
-                        <li>2. Enter your real email/details.</li>
-                        <li>3. Wait for the timer to finish here.</li>
+                    <h3 class="font-bold text-xl mb-2 text-blue-400">Strict Instructions:</h3>
+                    <ul class="text-gray-400 text-sm mb-8 space-y-2 text-left inline-block">
+                        <li>1. Click "Open Offer" button.</li>
+                        <li>2. <b>Don't come back</b> until 15s finish.</li>
+                        <li>3. If you return early, task will reset.</li>
                     </ul>
-                    
-                    <button onclick="startTask()" id="startBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black transition-all transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20">
-                        OPEN OFFER & START EARNING <i class="fas fa-external-link-alt"></i>
+                    <button onclick="startTask()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black transition-all transform active:scale-95 flex items-center justify-center gap-3 shadow-xl">
+                        OPEN OFFER & START <i class="fas fa-external-link-alt"></i>
                     </button>
                 </div>
 
@@ -53,80 +51,110 @@
                     <div class="relative w-24 h-24 mx-auto mb-6">
                         <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
                         <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-                        <i class="fas fa-shield-alt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-blue-500"></i>
+                        <i class="fas fa-eye absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-blue-500"></i>
                     </div>
-                    <p class="text-lg font-bold text-blue-400 animate-pulse uppercase tracking-tighter">Session Active...</p>
-                    <p class="text-[11px] text-gray-500 mt-2 px-4">Keep the offer window open and complete the registration to get paid.</p>
+                    <p id="statusText" class="text-lg font-bold text-blue-400 animate-pulse uppercase">Monitoring Activity...</p>
+                    <p class="text-[11px] text-gray-500 mt-2 px-4">Keep the offer window active. Returning early = No Reward.</p>
+                </div>
+
+                <div id="successState" class="hidden">
+                    <div class="animate-bounce mb-4">
+                        <i class="fas fa-check-circle text-7xl text-green-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-white">TASK COMPLETE!</h3>
+                    <p class="text-gray-400 text-sm mt-2">Click below to claim your reward.</p>
                 </div>
             </div>
         </div>
 
-        <div id="actionArea">
-            <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-black text-2xl transition-all shadow-xl shadow-green-900/30 uppercase">
-                CLAIM RS. 0.50
-            </button>
-            <div class="flex items-center justify-center gap-2 mt-6 opacity-40">
-                <i class="fas fa-lock text-[10px]"></i>
-                <p class="text-[10px] uppercase font-bold tracking-widest">Secure Verification System</p>
-            </div>
-        </div>
+        <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-black text-2xl transition-all shadow-xl uppercase">
+            CLAIM RS. 5
+        </button>
+
     </div>
 
     <script>
-        let timeLeft = 15; 
+        let timeLeft = 15;
+        let timerActive = false;
+        let timerInterval;
+
         const timerDisplay = document.getElementById('timerDisplay');
-        const claimBtn = document.getElementById('claimBtn');
         const startState = document.getElementById('startState');
         const processingState = document.getElementById('processingState');
+        const successState = document.getElementById('successState');
+        const claimBtn = document.getElementById('claimBtn');
+        const taskBox = document.getElementById('taskBox');
+        const rewardAmountEl = document.getElementById('rewardAmount');
+
+        // Fetch user plan reward dynamically (Flask injects plan info)
+        const userPlan = "{{ user.plan }}";
+        let reward = 5;
+        if(userPlan === "Gold") reward = 10;
+        else if(userPlan === "Diamond") reward = 15;
+
+        rewardAmountEl.innerText = `Rs. ${reward}`;
+        claimBtn.innerText = `CLAIM RS. ${reward}`;
 
         function startTask() {
-            // Updated CPAGrip Smart Link
-            const cpaLink = "https://singingfiles.com/show.php?l=0&u=2498556&id=59478"; 
+            const cpaLink = "https://singingfiles.com/show.php?l=0&u=2498556&id=59478&tracking_id=Paisapro"; 
             window.open(cpaLink, '_blank');
 
-            // UI Transitions
             startState.classList.add('hidden');
             processingState.classList.remove('hidden');
             timerDisplay.classList.remove('hidden');
+            
+            timerActive = true;
+            runTimer();
+        }
 
-            const countdown = setInterval(() => {
+        function runTimer() {
+            timerInterval = setInterval(() => {
                 timeLeft--;
-                if(timeLeft >= 0) { timerDisplay.innerText = timeLeft + "s"; }
+                timerDisplay.innerText = timeLeft + "s";
 
                 if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    timerDisplay.classList.add('hidden');
-                    processingState.innerHTML = `
-                        <div class="animate-bounce mb-4">
-                            <i class="fas fa-check-circle text-7xl text-green-500"></i>
-                        </div>
-                        <h3 class="text-2xl font-black text-white">READY TO CLAIM!</h3>
-                        <p class="text-gray-400 text-sm mt-2">Did you submit your email? If yes, click below.</p>
-                    `;
-                    claimBtn.classList.remove('hidden');
+                    clearInterval(timerInterval);
+                    timerActive = false;
+                    showSuccess();
                 }
             }, 1000);
         }
+
+        function showSuccess() {
+            processingState.classList.add('hidden');
+            timerDisplay.classList.add('hidden');
+            successState.classList.remove('hidden');
+            claimBtn.classList.remove('hidden');
+        }
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'visible' && timerActive && timeLeft > 0) {
+                clearInterval(timerInterval);
+                timerActive = false;
+                timeLeft = 15;
+                taskBox.classList.add('shake');
+                alert("❌ CHEAT DETECTED!\n\nAap 15 second se pehle wapas agaye. Please dubara start karein aur pura time wahan rukain.");
+                window.location.reload();
+            }
+        });
 
         claimBtn.addEventListener('click', async () => {
             claimBtn.disabled = true;
             claimBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> VERIFYING...';
 
             try {
-                // Pointing to your Python reward function
                 const response = await fetch('/add_reward'); 
-                
                 if (response.ok) {
-                    alert("Success! Rs. 0.50 have been added to your balance.");
-                    window.location.reload(); 
+                    alert(`Success! Rs. ${reward} added.`);
+                    window.location.reload();
                 } else {
-                    alert("Daily limit reached or session expired.");
+                    alert("Session expired. Try again.");
                     window.location.reload();
                 }
             } catch (err) {
-                alert("Connection failed! Please try again.");
+                alert("Connection error!");
                 claimBtn.disabled = false;
-                claimBtn.innerText = "CLAIM RS. 0.50";
+                claimBtn.innerText = `CLAIM RS. ${reward}`;
             }
         });
     </script>
