@@ -10,12 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background: #010409; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background: #010409; color: white; font-family: 'Inter', sans-serif; }
         .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(12px); border: 1px solid #30363d; }
         .task-container { position: relative; width: 100%; min-height: 280px; background: #0d1117; border-radius: 24px; border: 2px dashed #30363d; }
         .reward-badge { background: linear-gradient(90deg, #10b981, #059669); }
-        .shake { animation: shake 0.5s ease-in-out; border-color: #ef4444 !important; }
-        @keyframes shake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);} }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -59,13 +57,13 @@
                 </div>
 
                 <div id="successState" class="hidden">
-                    <i class="fas fa-check-circle text-7xl text-green-500 mb-4 animate-bounce"></i>
+                    <i class="fas fa-check-circle text-7xl text-green-500 mb-4"></i>
                     <h3 class="text-2xl font-black text-white uppercase">Ready to Claim!</h3>
                 </div>
             </div>
         </div>
 
-        <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-black text-2xl transition-all shadow-xl uppercase tracking-tighter">
+        <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-black text-2xl transition-all shadow-xl uppercase">
             CLAIM REWARD
         </button>
 
@@ -75,9 +73,7 @@
         let timeLeft = 15;
         let timerActive = false;
         let timerInterval;
-        let userSupposedToBeAway = false;
 
-        // Flask Plan Reward Integration
         const userPlan = "{{ user.plan }}";
         let reward = 5;
         if(userPlan === "Gold") reward = 10;
@@ -86,22 +82,20 @@
         document.getElementById('claimBtn').innerText = `CLAIM RS. ${reward}`;
 
         function startTask() {
-            // Links Tarteeb-war
             const cpaLink = "https://singingfiles.com/show.php?l=0&u=2498556&id=59478&tracking_id=Paisapro"; 
             const smartLink = "https://www.effectivegatecpm.com/uvgrfnv7?key=30c32a17a50c55774c1be1ddeeca2059";
 
-            // Open Ads
+            // Pehle CPA aur phir Direct Link khulega
             window.open(cpaLink, '_blank');
-            setTimeout(() => { window.open(smartLink, '_blank'); }, 600);
+            setTimeout(() => { window.open(smartLink, '_blank'); }, 800);
 
-            // UI Changes
             document.getElementById('startState').classList.add('hidden');
             document.getElementById('processingState').classList.remove('hidden');
             document.getElementById('timerDisplay').classList.remove('hidden');
             
             timerActive = true;
-            userSupposedToBeAway = true; 
-            
+            timeLeft = 15; 
+
             timerInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById('timerDisplay').innerText = timeLeft + "s";
@@ -120,24 +114,23 @@
             document.getElementById('claimBtn').classList.remove('hidden');
         }
 
-        // Anti-Cheat: User tab change detection
+        // --- FIXED LOGIC ---
+        // Visibility detection ko tab trigger hone dein jab timer khatam ho chuka ho 
+        // ya phir user waqai ghalat tareeqay se page leave kare.
         document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === 'visible' && timerActive && timeLeft > 0 && userSupposedToBeAway) {
+            if (document.visibilityState === 'visible' && timerActive && timeLeft > 5) {
+                // Agar user 10 second se pehle wapas aajaye toh reset
                 clearInterval(timerInterval);
                 timerActive = false;
-                alert("❌ TASK FAILED!\n\nAap timer poora hone se pehle wapas aa gaye. Reward ke liye pura time ad page par rukna lazmi hai.");
+                alert("❌ FAIL: Aap bohat jaldi wapas aagaye! Ads par 15s rukna zaroori hai.");
                 window.location.reload();
             }
         });
 
-        // Fixed Claim Logic: Redirecting to Flask Route
         document.getElementById('claimBtn').addEventListener('click', function() {
             const btn = document.getElementById('claimBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> PROCESSING...';
-
-            // Flask route '/add_reward' par direct bhej raha hoon
-            // Ye wahi kaam karega jo aap pehle chahte thay
+            btn.innerHTML = 'SAVING...';
             window.location.href = '/add_reward';
         });
     </script>
