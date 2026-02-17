@@ -8,49 +8,49 @@
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-    body { background: #010409; font-family: 'Inter', sans-serif; color: #fff; }
-    .glass { background: rgba(13,17,23,0.85); backdrop-filter: blur(12px); border: 1px solid #30363d; }
-    .task-container { position: relative; width: 100%; min-height: 280px; background: #0d1117; border-radius: 24px; border: 2px dashed #30363d; }
+    body { background: #f9fafb; font-family: 'Inter', sans-serif; color: #111827; }
+    .glass { background: #ffffff; border-radius: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .task-container { position: relative; width: 100%; min-height: 280px; background: #1f2937; border-radius: 1.5rem; border: 1px dashed #d1d5db; }
     .reward-badge { background: linear-gradient(90deg,#10b981,#059669); }
 </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-6">
 
-<div class="w-full max-w-xl p-6 md:p-10 glass rounded-3xl shadow-2xl text-center">
+<div class="w-full max-w-xl p-8 glass text-center">
 
     <!-- USER INFO -->
-    <div class="mb-6 flex flex-wrap justify-around bg-blue-900/20 p-4 rounded-xl">
-        <div class="text-center"><span class="font-bold">User:</span> {{ user.username }}</div>
-        <div class="text-center"><span class="font-bold">Plan:</span> {{ user.plan }}</div>
-        <div class="text-center"><span class="font-bold">Balance:</span> <span id="balance">{{ user.balance }}</span> Rs.</div>
-        <div class="text-center"><span class="font-bold">Ads Watched:</span> <span id="adsWatched">{{ user.daily_ads }}</span></div>
+    <div class="mb-8 flex flex-wrap justify-around bg-gray-100 p-5 rounded-xl shadow-md">
+        <div class="text-center"><span class="font-semibold">User:</span> {{ user.username }}</div>
+        <div class="text-center"><span class="font-semibold">Plan:</span> {{ user.plan }}</div>
+        <div class="text-center"><span class="font-semibold">Balance:</span> <span id="balance">{{ user.balance }}</span> Rs.</div>
+        <div class="text-center"><span class="font-semibold">Ads Watched:</span> <span id="adsWatched">{{ user.daily_ads }}</span></div>
     </div>
 
     <!-- HEADER -->
     <div class="mb-6">
-        <div class="reward-badge inline-block px-4 py-1 text-xs font-black uppercase rounded-full mb-2 shadow-lg">Verified Ad Task</div>
-        <h2 class="text-3xl md:text-4xl font-black uppercase mb-1 tracking-tight">Earn Reward</h2>
-        <p class="text-gray-400 text-xs font-bold uppercase tracking-wide">Complete task to add balance</p>
+        <div class="reward-badge inline-block px-5 py-2 text-sm font-black uppercase rounded-full mb-3 shadow-lg text-white">Verified CPA Task</div>
+        <h2 class="text-3xl font-extrabold mb-1 tracking-tight text-gray-900">Earn Reward</h2>
+        <p class="text-gray-500 text-sm font-semibold uppercase tracking-wide">Complete task to add balance</p>
     </div>
 
     <!-- TASK BOX -->
     <div class="task-container mb-8 flex items-center justify-center p-6 relative">
-        <div id="timerDisplay" class="hidden absolute top-4 right-4 bg-red-600 text-white font-black px-4 py-1 rounded-lg text-lg z-50 animate-pulse">15s</div>
+        <div id="timerDisplay" class="hidden absolute top-4 right-4 bg-red-500 text-white font-bold px-4 py-1 rounded-lg text-lg z-50 animate-pulse">15s</div>
 
         <div id="taskContent" class="w-full">
 
             <!-- START STATE -->
             <div id="startState">
-                <div class="bg-blue-600/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-500/30">
-                    <i class="fas fa-play text-4xl text-blue-500"></i>
+                <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
+                    <i class="fas fa-play text-4xl text-blue-600"></i>
                 </div>
-                <h3 class="font-bold text-xl mb-2 text-blue-400">Rules:</h3>
-                <ul class="text-gray-400 text-sm mb-8 space-y-2 text-left inline-block">
-                    <li>1. Click "START" to open reward pages.</li>
-                    <li>2. Wait <strong>15 Seconds</strong> on those pages.</li>
+                <h3 class="font-bold text-xl mb-3 text-gray-700">Rules:</h3>
+                <ul class="text-gray-500 text-sm mb-8 space-y-2 text-left inline-block">
+                    <li>1. Click "START" to open the CPA offer.</li>
+                    <li>2. Wait <strong>15 Seconds</strong> on the offer page.</li>
                     <li>3. Return here to claim your reward.</li>
                 </ul>
-                <button onclick="startTask()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black transition-all flex items-center justify-center gap-3 shadow-xl uppercase">
+                <button onclick="startTask()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg uppercase">
                     START TASK <i class="fas fa-external-link-alt"></i>
                 </button>
             </div>
@@ -58,22 +58,22 @@
             <!-- PROCESSING STATE -->
             <div id="processingState" class="hidden text-center">
                 <div class="relative w-24 h-24 mx-auto mb-6">
-                    <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
-                    <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-                    <i class="fas fa-shield-alt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-blue-500"></i>
+                    <div class="absolute inset-0 border-4 border-gray-300/40 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                    <i class="fas fa-shield-alt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-blue-600"></i>
                 </div>
-                <p class="text-lg font-bold text-blue-400 animate-pulse">VALIDATING AD VIEW...</p>
+                <p class="text-lg font-bold text-blue-600 animate-pulse">VALIDATING CPA VIEW...</p>
             </div>
 
             <!-- SUCCESS STATE -->
             <div id="successState" class="hidden">
                 <i class="fas fa-check-circle text-7xl text-green-500 mb-4"></i>
-                <h3 class="text-2xl font-black text-white uppercase">Ready to Claim!</h3>
+                <h3 class="text-2xl font-extrabold text-gray-900 uppercase">Ready to Claim!</h3>
             </div>
         </div>
     </div>
 
-    <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-black text-2xl transition-all shadow-xl uppercase">CLAIM REWARD</button>
+    <button id="claimBtn" class="hidden w-full bg-green-600 hover:bg-green-700 text-white py-5 rounded-3xl font-extrabold text-2xl transition-all shadow-lg uppercase">CLAIM REWARD</button>
 
 </div>
 
@@ -90,19 +90,16 @@ else if(userPlan === "Diamond") reward = 15;
 document.getElementById('claimBtn').innerText = `CLAIM RS. ${reward}`;
 
 function startTask() {
-    const adLinks = [
-        "https://singingfiles.com/show.php?l=0&u=2498556&id=59478&tracking_id=Paisapro",
-        "https://www.effectivegatecpm.com/uvgrfnv7?key=30c32a17a50c55774c1be1ddeeca2059"
-    ];
+    const cpaLink = "https://singingfiles.com/show.php?l=0&u=2498556&id=59478&tracking_id=Paisapro"; // Only CPA link
 
-    adLinks.forEach((link, i) => setTimeout(() => window.open(link, '_blank'), i*500));
+    window.open(cpaLink, '_blank');
 
     document.getElementById('startState').classList.add('hidden');
     document.getElementById('processingState').classList.remove('hidden');
     document.getElementById('timerDisplay').classList.remove('hidden');
 
     timerActive = true;
-    timeLeft = 15; 
+    timeLeft = 15;
 
     timerInterval = setInterval(() => {
         timeLeft--;
@@ -126,7 +123,7 @@ document.addEventListener("visibilitychange", function() {
     if(document.visibilityState === 'visible' && timerActive && timeLeft > 10){
         clearInterval(timerInterval);
         timerActive = false;
-        alert("❌ FAIL: Aap bohat jaldi wapas aaye! Ads par 15s rukna zaroori hai.");
+        alert("❌ FAIL: You returned too soon! Wait 15s on the CPA offer.");
         window.location.reload();
     }
 });
