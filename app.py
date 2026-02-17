@@ -93,9 +93,17 @@ def index():
     return render_template("index.html", user=user, leaderboard=top_earners, earners=top_earners, online=online_now)
 
 # Registration
+from flask import make_response
+
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
+        # Check if device already has a cookie
+        device_cookie = request.cookies.get("device_id")
+        if device_cookie:
+            flash("⚠️ Only 1 account per device is allowed!", "error")
+            return redirect(url_for("login"))
+
         username = request.form.get("username")
         email = request.form.get("email")
         password = generate_password_hash(request.form.get("password"))
@@ -103,15 +111,20 @@ def register():
         if User.query.filter_by(email=email).first():
             flash("Email already exists!", "error")
             return redirect(url_for("register"))
+        
+        # Generate unique user referral code
         user_uid = str(uuid.uuid4())[:8].upper()
         new_user = User(username=username, email=email, password=password,
                         referral_code=user_uid, referred_by=ref_code)
         db.session.add(new_user)
         db.session.commit()
-        flash(f"Account Created! Your UID is {user_uid}", "success")
-        return redirect(url_for("login"))
-    return render_template("register.html")
 
+        # Set cookie to mark device has registered
+        response = make_response(redirect(url_for("login")))
+        response.set_cookie("device_id", secrets.token_hex(16), max_age=10*365*24*60*60)  # 10 years
+        flash(f"Account Created! Your UID is {user_uid}", "success")
+        return response
+    return render_template("register.html")
 # Login
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -285,17 +298,20 @@ def reject_plan(id):
         db.session.commit()
         flash("Plan request rejected.", "danger")
     return redirect(url_for('admin_dashboard'))
-
 @app.route("/admin/approve_withdraw/<int:id>")
 def approve_withdraw(id):
     if "user_id" not in session: return redirect(url_for('login'))
     admin = User.query.get(session["user_id"])
     if not (admin.email=='paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized",403
     trans = Transaction.query.get(id)
-    if trans:
+    if trans and trans.status == "Pending":
+        user = User.query.get(trans.user_id)
+        # Deduct amount from user if not already deducted
+        if user.balance >= trans.amount:
+            user.balance -= trans.amount
         trans.status = "Paid"
         db.session.commit()
-        flash("Withdrawal marked as PAID!", "success")
+        flash("Withdrawal approved and balance deducted!", "success")
     return redirect(url_for('admin_dashboard'))
 
 @app.route("/admin/reject_withdraw/<int:id>")
@@ -304,14 +320,17 @@ def reject_withdraw(id):
     admin = User.query.get(session["user_id"])
     if not (admin.email=='paisapropakistan@gmail.com' or admin.is_admin): return "Unauthorized",403
     trans = Transaction.query.get(id)
-    if trans:
+    if trans and trans.status == "Pending":
         user = User.query.get(trans.user_id)
+        # Refund if rejected
         user.balance += trans.amount
         trans.status = "Rejected"
         db.session.commit()
         flash("Withdrawal rejected and refunded!", "danger")
     return redirect(url_for('admin_dashboard'))
-
+    
+    
+    
 # ================= RUN APP =================
 if __name__=="__main__":
     app.run(debug=True, port=5000)
