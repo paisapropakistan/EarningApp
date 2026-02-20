@@ -160,8 +160,7 @@
     </div>
 </div>
 
-
-
+<br>
 
         <div class="space-y-4">
             <div class="glass p-6 rounded-3xl border-l-4 border-green-500 hover:translate-x-2 transition duration-300">
@@ -239,13 +238,13 @@
 <p class="text-4xl font-black text-blue-500">
     {{ user.daily_ads if user else '0' }} 
     <span class="text-xl text-gray-600 italic">
-        / {% if user.plan == 'Diamond' %}70{% elif user.plan == 'Gold' %}70{% else %}50{% endif %}
+        / {% if user.plan == 'Diamond' %}70{% elif user.plan == 'Gold' %}70{% else %}100{% endif %}
     </span>
 </p>
 
 <div class="w-full bg-gray-800 h-3 mt-6 rounded-full overflow-hidden border border-gray-700/50 shadow-inner">
     <div class="bg-blue-500 h-full transition-all duration-700 ease-in-out shadow-[0_0_15px_rgba(59,130,246,0.6)]" 
-         style="width: {{ (user.daily_ads / (1000 if user.plan == 'Diamond' else (700 if user.plan == 'Gold' else 300)) * 100) if user else 0 }}%">
+         style="width: {{ (user.daily_ads / (100 if user.plan == 'Diamond' else (70 if user.plan == 'Gold' else 70)) * 100) if user else 0 }}%">
     </div>
 </div>
 

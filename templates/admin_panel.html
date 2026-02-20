@@ -34,14 +34,14 @@
           {% endif %}
         {% endwith %}
 
+        <!-- Pending Plan Upgrades -->
         <div class="mb-12">
             <h2 class="text-sm font-black text-gray-500 uppercase tracking-[4px] mb-6 flex items-center">
                 <i class="fas fa-crown mr-2 text-yellow-500"></i> Pending Plan Upgrades
             </h2>
-            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for req in upgrades %}
-                <div class="glass p-6 rounded-[40px] border-t-4 border-yellow-500 hover:shadow-[0_0_30px_rgba(234,179,8,0.1)] transition btn-hover">
+                <div class="glass p-6 rounded-3xl border-t-4 border-yellow-500 hover:shadow-[0_0_30px_rgba(234,179,8,0.1)] transition btn-hover">
                     <div class="flex justify-between mb-4">
                         <span class="text-[10px] font-black bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full uppercase">{{ req.plan_name }}</span>
                         <span class="text-[10px] text-gray-500 font-mono">User ID: #{{ req.user_id }}</span>
@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 {% else %}
-                <div class="col-span-full py-16 text-center glass rounded-[40px] border-dashed border-2 border-gray-800">
+                <div class="col-span-full py-16 text-center glass rounded-3xl border-dashed border-2 border-gray-800">
                     <i class="fas fa-ghost text-4xl text-gray-800 mb-4"></i>
                     <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">No pending plan requests</p>
                 </div>
@@ -80,11 +80,12 @@
             </div>
         </div>
 
-        <div>
+        <!-- Pending Withdrawals -->
+        <div class="mb-12">
             <h2 class="text-sm font-black text-gray-500 uppercase tracking-[4px] mb-6 flex items-center">
                 <i class="fas fa-money-bill-transfer mr-2 text-blue-500"></i> Pending Withdrawals
             </h2>
-            <div class="glass rounded-[40px] overflow-hidden border border-gray-800">
+            <div class="glass rounded-3xl overflow-hidden border border-gray-800">
                 <table class="w-full text-left text-xs">
                     <thead class="bg-white/5 uppercase font-black text-gray-400 border-b border-gray-800">
                         <tr>
@@ -107,8 +108,8 @@
                                 <div class="max-w-xs text-gray-400 truncate font-medium">{{ w.details }}</div>
                             </td>
                             <td class="p-5 text-right flex justify-end gap-2">
-                                <a href="{{ url_for('approve_withdraw', id=w.id) }}" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl font-black uppercase text-[10px] transition shadow-lg shadow-blue-900/20">Mark Paid</a>
-                                <a href="{{ url_for('reject_withdraw', id=w.id) }}" class="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-5 py-2 rounded-xl font-black uppercase text-[10px] transition">Reject</a>
+                                <a href="{{ url_for('approve_withdraw', id=w.id) }}" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-2xl font-black uppercase text-[10px] transition shadow-lg shadow-blue-900/20">Mark Paid</a>
+                                <a href="{{ url_for('reject_withdraw', id=w.id) }}" class="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-5 py-2 rounded-2xl font-black uppercase text-[10px] transition">Reject</a>
                             </td>
                         </tr>
                         {% else %}
@@ -123,6 +124,10 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pending Social Tasks -->
+
+
     </div>
 </body>
 </html>
