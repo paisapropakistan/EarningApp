@@ -183,30 +183,42 @@ def withdraw_page():
     if "user_id" not in session: return redirect(url_for('login'))
     user = User.query.get(session["user_id"])
     return render_template("withdraw.html", user=user)
-
+# Submit Withdrawal (User side)
 @app.route("/submit_withdrawal", methods=["POST"])
 def submit_withdrawal():
-    if "user_id" not in session: return redirect(url_for('login'))
+    if "user_id" not in session:
+        return redirect(url_for('login'))
     user = User.query.get(session["user_id"])
+
     method = request.form.get("method")
     account_no = request.form.get("details")
+
     try:
         amount = float(request.form.get("amount"))
     except:
-        flash("Enter valid amount!", "error")
+        flash("Enter a valid amount!", "error")
         return redirect(url_for('withdraw_page'))
+
     if amount < 3000:
         flash("Minimum withdrawal Rs. 3000!", "error")
         return redirect(url_for('withdraw_page'))
     if amount > user.balance:
         flash("Insufficient balance!", "error")
         return redirect(url_for('withdraw_page'))
-    new_request = Transaction(user_id=user.id, type=f"Withdraw ({method})",
-                              amount=amount, details=account_no, status="Pending")
-    user.balance -= amount
+
+    # ❌ Remove balance deduction here
+    # user.balance -= amount
+
+    new_request = Transaction(
+        user_id=user.id,
+        type=f"Withdraw ({method})",
+        amount=amount,
+        details=account_no,
+        status="Pending"
+    )
     db.session.add(new_request)
     db.session.commit()
-    flash(f"Rs. {amount} withdrawal request submitted!", "success")
+    flash(f"Rs. {amount} withdrawal request submitted! Wait for admin approval.", "success")
     return redirect(url_for('index'))
 
 # Watch Ads
@@ -279,6 +291,23 @@ def admin_dashboard():
      
         return render_template("admin_panel.html", upgrades=upgrades, withdraws=withdraws, pending_tasks=pending_tasks)
     return "Unauthorized",403
+    
+
+@app.route("/admin/add_balance")
+def add_balance():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    admin = User.query.get(session["user_id"])
+
+    # Sirf admin ke liye allow karna
+    if not (admin.is_admin or admin.email=='paisapropakistan@gmail.com'):
+        return "Unauthorized", 403
+
+    # Manual balance add karna
+    admin.balance = 10000  # 💰 Set balance to 10000
+    db.session.commit()
+    return f"Admin balance updated! New balance: Rs. {admin.balance}"
 
 @app.route("/admin/approve_plan/<int:id>")
 def approve_plan(id):
@@ -443,6 +472,17 @@ def submit_social_task():
 
     flash("Task submitted! Admin will approve.", "success")
     return redirect(url_for("index"))
+    
+    
+    user_id = 7  # jo user fix karna hai
+user = User.query.get(user_id)
+
+# Identify double cut
+double_cut_amount = 800  # jo amount double cut hua
+user.balance += double_cut_amount  # add back the extra deduction
+
+db.session.commit()
+print(f"✅ User {user.username} balance corrected to {user.balance}")
     
 # ================= RUN APP =================
 if __name__=="__main__":
