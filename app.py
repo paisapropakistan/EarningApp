@@ -473,17 +473,6 @@ def submit_social_task():
     flash("Task submitted! Admin will approve.", "success")
     return redirect(url_for("index"))
     
-    
-    user_id = 7  # jo user fix karna hai
-user = User.query.get(user_id)
-
-# Identify double cut
-double_cut_amount = 800  # jo amount double cut hua
-user.balance += double_cut_amount  # add back the extra deduction
-
-db.session.commit()
-print(f"✅ User {user.username} balance corrected to {user.balance}")
-    
 # ================= RUN APP =================
 if __name__=="__main__":
     app.run(debug=True, port=5000)
