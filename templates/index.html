@@ -159,7 +159,119 @@
         </div>
     </div>
 </div>
+<!-- ================= SOCIAL TASK CARD ================= -->
+<div class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-2xl p-8 border border-gray-200">
 
+    <!-- Status Badge -->
+    {% if today_submitted %}
+    <div class="mb-4 text-center">
+        <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">
+            ⏳ آج کا ٹاسک پہلے ہی جمع ہو چکا ہے - ایڈمن کی منظوری کا انتظار کریں
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- Warning Message -->
+    <div class="mb-6 text-center">
+        <span class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold">
+            ⚠️ جعلی یا ڈپلیکیٹ اسکرین شاٹ اپلوڈ کرنے والے اکاؤنٹ بلاک کر دیے جائیں گے
+        </span>
+    </div>
+
+    <!-- Heading -->
+    <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-6">
+        Earn Rs. 10 - Social Task
+    </h2>
+
+    <!-- Instructions -->
+    <div class="text-center text-gray-600 text-sm space-y-2 mb-8">
+        <p>✅ یوٹیوب چینل سبسکرائب کریں یا ٹک ٹاک فالو کریں</p>
+        <p>✅ اسکرین شاٹ لیں</p>
+        <p>✅ نیچے اپلوڈ کریں</p>
+        <p>✅ ایڈمن کی منظوری کے بعد Rs.10 حاصل کریں</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="space-y-4 mb-6">
+
+        <a href="https://youtu.be/eKgSmOqsUlk?si=SG9oDsBKtZ2G_hZi"
+           target="_blank"
+           onclick="selectPlatform('YouTube')"
+           class="flex items-center justify-center gap-3 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg transition transform hover:scale-105">
+            YouTube Subscribe
+        </a>
+
+        <a href="https://www.tiktok.com/@paisa.pro.pakista"
+           target="_blank"
+           onclick="selectPlatform('TikTok')"
+           class="flex items-center justify-center gap-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg transition transform hover:scale-105">
+            TikTok Follow
+        </a>
+
+    </div>
+
+    <!-- Upload Form -->
+    {% if not today_submitted %}
+    <form method="POST"
+          action="{{ url_for('submit_social_task') }}"
+          enctype="multipart/form-data"
+          class="space-y-5"
+          onsubmit="showPopup()">
+
+        <input type="hidden" name="platform" id="platformInput">
+
+        <div>
+            <label class="block text-gray-700 font-semibold mb-2">
+                اسکرین شاٹ اپلوڈ کریں
+            </label>
+            <input type="file" name="screenshot" required
+                   class="w-full border border-gray-300 rounded-xl p-3">
+        </div>
+
+        <button type="submit"
+                id="submitBtn"
+                disabled
+                class="w-full bg-green-600 hover:bg-green-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg disabled:opacity-50">
+            جمع کریں اور Rs.10 حاصل کریں
+        </button>
+    </form>
+    {% endif %}
+
+</div>
+
+<!-- Success Popup -->
+<div id="successPopup"
+     class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+
+    <div class="bg-white rounded-2xl p-8 text-center shadow-2xl animate-bounce">
+        <h3 class="text-2xl font-bold text-green-600 mb-3">
+            ✅ کامیابی سے جمع کر دیا گیا!
+        </h3>
+        <p class="text-gray-600 mb-4">
+            آپ کا ٹاسک ریویو کے تحت ہے۔ ایڈمن کی منظوری کا انتظار کریں۔
+        </p>
+        <button onclick="closePopup()"
+                class="bg-green-600 text-white px-6 py-2 rounded-xl">
+            ٹھیک ہے
+        </button>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+function selectPlatform(platform) {
+    document.getElementById("platformInput").value = platform;
+    document.getElementById("submitBtn").disabled = false;
+}
+
+function showPopup() {
+    document.getElementById("successPopup").classList.remove("hidden");
+}
+
+function closePopup() {
+    document.getElementById("successPopup").classList.add("hidden");
+}
+</script>
 <br>
 
         <div class="space-y-4">

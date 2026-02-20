@@ -127,7 +127,79 @@
 
         <!-- Pending Social Tasks -->
 
+<!-- Pending Social Tasks -->
+<div class="mb-12">
+    <h2 class="text-sm font-black text-gray-500 uppercase tracking-[4px] mb-6 flex items-center">
+        <i class="fas fa-share-nodes mr-2 text-green-400"></i> Pending Social Tasks
+    </h2>
 
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for task in pending_tasks %}
+        <div class="glass p-6 rounded-3xl border-t-4 border-green-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition btn-hover">
+
+            <!-- Task Header -->
+            <div class="flex justify-between mb-4">
+                <span class="text-[10px] font-black bg-green-500/20 text-green-400 px-3 py-1 rounded-full uppercase">
+                    {{ task.platform }}
+                </span>
+                <span class="text-[10px] text-gray-500 font-mono">
+                    User ID: #{{ task.user_id }}
+                </span>
+            </div>
+
+            <!-- Screenshot / Proof -->
+            <div class="mb-4">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                    Uploaded Proof
+                </p>
+
+                <div class="relative group overflow-hidden rounded-2xl border border-gray-800 aspect-video">
+                    {% if task.screenshot %}
+                    <img src="{{ url_for('static', filename='uploads/' + task.screenshot) }}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+
+                    <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <a href="{{ url_for('static', filename='uploads/' + task.screenshot) }}"
+                           target="_blank"
+                           class="bg-white text-black px-6 py-2 rounded-full text-[10px] font-black uppercase">
+                           View Full
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="w-full h-full bg-gray-900 flex items-center justify-center">
+                        <p class="text-[10px] text-gray-600 uppercase italic">
+                            No Screenshot
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Approve / Reject Buttons -->
+            <div class="flex gap-2">
+                <a href="{{ url_for('approve_task', id=task.id) }}"
+                   class="flex-1 bg-green-500 hover:bg-green-400 text-black py-3 rounded-2xl text-[10px] font-black uppercase text-center transition shadow-lg shadow-green-900/20">
+                   Approve + Rs.10
+                </a>
+
+                <a href="{{ url_for('reject_task', id=task.id) }}"
+                   class="flex-1 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white py-3 rounded-2xl text-[10px] font-black uppercase text-center transition">
+                   Reject
+                </a>
+            </div>
+
+        </div>
+        {% else %}
+        <!-- No Pending Tasks -->
+        <div class="col-span-full py-16 text-center glass rounded-3xl border-dashed border-2 border-gray-800">
+            <i class="fas fa-check-circle text-4xl text-gray-800 mb-4"></i>
+            <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">
+                No pending social tasks
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
     </div>
 </body>
 </html>
