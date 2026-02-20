@@ -27,6 +27,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 db = SQLAlchemy(app)
 
+
 # ================= DATABASE MODELS =================
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +61,17 @@ class Transaction(db.Model):
     details = db.Column(db.String(200))
     status = db.Column(db.String(50), default="Pending")
 
+from datetime import datetime
+
+class SocialTask(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    platform = db.Column(db.String(50))
+    screenshot = db.Column(db.String(200))
+    status = db.Column(db.String(20), default="Pending")
+    reward = db.Column(db.Integer, default=10)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
 # ================= DATABASE FIXER =================
 with app.app_context():
     db.create_all()
@@ -183,8 +195,8 @@ def submit_withdrawal():
     except:
         flash("Enter valid amount!", "error")
         return redirect(url_for('withdraw_page'))
-    if amount < 2000:
-        flash("Minimum withdrawal Rs. 2000!", "error")
+    if amount < 800:
+        flash("Minimum withdrawal Rs. 1000!", "error")
         return redirect(url_for('withdraw_page'))
     if amount > user.balance:
         flash("Insufficient balance!", "error")
@@ -213,8 +225,8 @@ def complete_ad():
     if "user_id" not in session:
         return jsonify({"status":"error","message":"Login required"}),401
     user = User.query.get(session["user_id"])
-    plan_rewards = {"Free":(50,5),"Gold":(70,10),"Diamond":(70,15)}
-    limit,reward = plan_rewards.get(user.plan, (50,5))
+    plan_rewards = {"Free":(100,1),"Gold":(70,10),"Diamond":(70,15)}
+    limit,reward = plan_rewards.get(user.plan, (100,1))
     if user.daily_ads >= limit:
         return jsonify({"status":"error","message":f"Daily limit reached ({limit})"})
     user.balance += reward
@@ -228,8 +240,8 @@ def complete_ad():
 def add_reward():
     if "user_id" not in session: return redirect(url_for('login'))
     user = User.query.get(session["user_id"])
-    plan_rewards = {"Free":(50,5),"Gold":(70,10),"Diamond":(70,15)}
-    limit,reward = plan_rewards.get(user.plan,(50,5))
+    plan_rewards = {"Free":(100,1),"Gold":(70,10),"Diamond":(70,15)}
+    limit,reward = plan_rewards.get(user.plan,(100,5))
     if user.daily_ads < limit:
         user.balance += reward
         user.daily_ads += 1
@@ -263,7 +275,9 @@ def admin_dashboard():
     if admin and (admin.email=='paisapropakistan@gmail.com' or admin.is_admin):
         upgrades = PaymentRequest.query.filter_by(status='Pending').all()
         withdraws = Transaction.query.filter_by(status='Pending').all()
-        return render_template("admin_panel.html", upgrades=upgrades, withdraws=withdraws)
+        pending_tasks = SocialTask.query.filter_by(status="Pending").all()
+     
+        return render_template("admin_panel.html", upgrades=upgrades, withdraws=withdraws, pending_tasks=pending_tasks)
     return "Unauthorized",403
 
 @app.route("/admin/approve_plan/<int:id>")
@@ -329,7 +343,102 @@ def reject_withdraw(id):
         flash("Withdrawal rejected and refunded!", "danger")
     return redirect(url_for('admin_dashboard'))
     
+@app.route("/admin/approve_task/<int:id>")
+def approve_task(id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    admin = User.query.get(session["user_id"])
+
+    if not (admin.email == "paisapropakistan@gmail.com" or admin.is_admin):
+        return "Unauthorized", 403
+
+    task = SocialTask.query.get(id)
+
+    if task and task.status == "Pending":
+        user = User.query.get(task.user_id)
+
+        user.balance += task.reward
+        task.status = "Approved"
+
+        db.session.commit()
+        flash("Task approved & Rs.10 added!", "success")
+
+    return redirect(url_for("admin_dashboard"))
     
+    
+    
+@app.route("/admin/reject_task/<int:id>")
+def reject_task(id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    admin = User.query.get(session["user_id"])
+    if not admin.is_admin:
+        return "Unauthorized", 403
+
+    task = SocialTask.query.get(id)
+
+    if task and task.status == "Pending":
+        task.status = "Rejected"
+        db.session.commit()
+        flash("Task rejected!", "danger")
+
+    return redirect(url_for("admin_dashboard"))
+    
+    
+    
+from datetime import datetime
+from sqlalchemy import func
+
+@app.route("/submit_social_task", methods=["POST"])
+def submit_social_task():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    user = User.query.get(session["user_id"])
+
+    # ✅ Correct daily limit (1 task per day)
+    today = datetime.utcnow().date()
+
+    today_tasks = SocialTask.query.filter(
+        SocialTask.user_id == user.id,
+        func.date(SocialTask.created_at) == today
+    ).count()
+
+    if today_tasks >= 5:
+        flash("You can only submit 1 social task per day!", "error")
+        return redirect(url_for("index"))
+
+    platform = request.form.get("platform")
+    file = request.files.get("screenshot")
+
+    if not platform or not file:
+        flash("Platform and Screenshot are required!", "error")
+        return redirect(url_for("index"))
+
+    # ✅ Make sure folder exists
+    upload_path = os.path.join("static", "uploads", "screenshots")
+    os.makedirs(upload_path, exist_ok=True)
+
+    filename = secure_filename(
+        f"{platform}_{user.id}_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{file.filename}"
+    )
+
+    file.save(os.path.join(upload_path, filename))
+
+    new_task = SocialTask(
+        user_id=user.id,
+        platform=platform,
+        screenshot=filename,
+        status="Pending"
+    )
+
+    db.session.add(new_task)
+    db.session.commit()
+
+    flash("Task submitted! Admin will approve.", "success")
+    return redirect(url_for("index"))
     
 # ================= RUN APP =================
 if __name__=="__main__":
