@@ -195,8 +195,8 @@ def submit_withdrawal():
     except:
         flash("Enter valid amount!", "error")
         return redirect(url_for('withdraw_page'))
-    if amount < 800:
-        flash("Minimum withdrawal Rs. 1000!", "error")
+    if amount < 3000:
+        flash("Minimum withdrawal Rs. 3000!", "error")
         return redirect(url_for('withdraw_page'))
     if amount > user.balance:
         flash("Insufficient balance!", "error")
@@ -225,7 +225,7 @@ def complete_ad():
     if "user_id" not in session:
         return jsonify({"status":"error","message":"Login required"}),401
     user = User.query.get(session["user_id"])
-    plan_rewards = {"Free":(100,1),"Gold":(70,10),"Diamond":(70,15)}
+    plan_rewards = {"Free":(200,1),"Gold":(70,10),"Diamond":(70,15)}
     limit,reward = plan_rewards.get(user.plan, (100,1))
     if user.daily_ads >= limit:
         return jsonify({"status":"error","message":f"Daily limit reached ({limit})"})
@@ -240,7 +240,7 @@ def complete_ad():
 def add_reward():
     if "user_id" not in session: return redirect(url_for('login'))
     user = User.query.get(session["user_id"])
-    plan_rewards = {"Free":(100,1),"Gold":(70,10),"Diamond":(70,15)}
+    plan_rewards = {"Free":(200,1),"Gold":(70,10),"Diamond":(70,15)}
     limit,reward = plan_rewards.get(user.plan,(100,5))
     if user.daily_ads < limit:
         user.balance += reward
@@ -301,6 +301,8 @@ def approve_plan(id):
         flash(f"{user.username} approved for {req.plan_name}", "success")
     return redirect(url_for('admin_dashboard'))
 
+
+
 @app.route("/admin/reject_plan/<int:id>")
 def reject_plan(id):
     if "user_id" not in session: return redirect(url_for('login'))
@@ -327,6 +329,8 @@ def approve_withdraw(id):
         db.session.commit()
         flash("Withdrawal approved and balance deducted!", "success")
     return redirect(url_for('admin_dashboard'))
+    
+    
 
 @app.route("/admin/reject_withdraw/<int:id>")
 def reject_withdraw(id):
@@ -407,7 +411,7 @@ def submit_social_task():
     ).count()
 
     if today_tasks >= 5:
-        flash("You can only submit 1 social task per day!", "error")
+        flash("You can only submit 5 social task per day!", "error")
         return redirect(url_for("index"))
 
     platform = request.form.get("platform")
