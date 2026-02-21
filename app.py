@@ -137,7 +137,6 @@ def register():
         flash(f"Account Created! Your UID is {user_uid}", "success")
         return response
     return render_template("register.html")
-
 # Login
 @app.route("/login", methods=["GET","POST"])
 def login():
