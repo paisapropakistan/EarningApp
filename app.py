@@ -110,20 +110,9 @@ from flask import make_response
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
-
+        # Check if device already has a cookie
         device_cookie = request.cookies.get("device_id")
-
-        # Check if admin is logged in
-        current_user = None
-        if "user_id" in session:
-            current_user = User.query.get(session["user_id"])
-
-        is_admin_user = False
-        if current_user and (current_user.email == "paisapropakistan@gmail.com" or current_user.is_admin):
-            is_admin_user = True
-
-        # Block only normal users
-        if device_cookie and not is_admin_user:
+        if device_cookie:
             flash("⚠️ Only 1 account per device is allowed!", "error")
             return redirect(url_for("login"))
 
@@ -131,34 +120,24 @@ def register():
         email = request.form.get("email")
         password = generate_password_hash(request.form.get("password"))
         ref_code = request.args.get("ref") or request.form.get("ref_code")
-
         if User.query.filter_by(email=email).first():
             flash("Email already exists!", "error")
             return redirect(url_for("register"))
-
+        
+        # Generate unique user referral code
         user_uid = str(uuid.uuid4())[:8].upper()
-
-        new_user = User(
-            username=username,
-            email=email,
-            password=password,
-            referral_code=user_uid,
-            referred_by=ref_code
-        )
-
+        new_user = User(username=username, email=email, password=password,
+                        referral_code=user_uid, referred_by=ref_code)
         db.session.add(new_user)
         db.session.commit()
 
+        # Set cookie to mark device has registered
         response = make_response(redirect(url_for("login")))
-
-        # Only set device cookie for normal users
-        if not is_admin_user:
-            response.set_cookie("device_id", secrets.token_hex(16), max_age=10*365*24*60*60)
-
+        response.set_cookie("device_id", secrets.token_hex(16), max_age=10*365*24*60*60)  # 10 years
         flash(f"Account Created! Your UID is {user_uid}", "success")
         return response
-
     return render_template("register.html")
+
 # Login
 @app.route("/login", methods=["GET","POST"])
 def login():
