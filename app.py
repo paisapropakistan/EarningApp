@@ -43,7 +43,6 @@ class User(db.Model):
     referred_by = db.Column(db.String(20))
     referral_balance = db.Column(db.Float, default=0.0)
     last_bonus_date = db.Column(db.Date, nullable=True)
-    is_banned = db.Column(db.Boolean, default=False)
 
 class PaymentRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -179,8 +178,6 @@ def login():
             session["user_id"] = user.id
             return redirect(url_for("index"))
         flash("Invalid email or password!", "error")
-        if user.is_banned:
-            flash("you are Account is banned")
     return render_template("login.html")
 
 # Logout
